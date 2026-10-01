@@ -4,43 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="format-detection" content="telephone=no">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="Financial map in 7 steps">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Concert budget check">
 <meta name="author" content="Ainazik Mamaeva">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:title" content="Finansovaya karta">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23173F3A'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23C7A66A'/%3E%3C/svg%3E">
-<title>Финансовая карта</title>
+<meta property="og:title" content="Potyanesh li ty Shakiru">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230D0A1E'/%3E%3Cpath d='M16 6 L25 15 L16 27 L7 15 Z' fill='%23FF3D8A'/%3E%3Cpath d='M16 6 L25 15 L16 15 Z' fill='%2356E1E8'/%3E%3C/svg%3E">
+<title>Потянешь ли ты Шакиру</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;700;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
+/* Одна визуальная среда — концертная ночь. Тема не переключается:
+   это осознанный выбор под тему, поэтому каждый цвет задан явно,
+   а у body всегда свой фон. Альбом построен на образе слёз,
+   превращающихся в бриллианты, — отсюда холодный кристальный
+   циан и самоцветная фуксия на глубоком индиго. */
 :root{
-  --bg:#F7F5EF; --surface:#FFFFFF; --surface-2:#F1EFE7; --surface-3:#E9E6DC;
-  --ink:#243634; --ink-2:#7A8580; --line:#DDDCD4;
-  --accent:#C7A66A; --deep:#173F3A; --on-deep:#F7F5EF;
-  --pos:#2E6F52; --neg:#A5453A;
-  --track:#E4E2D8;
+  --bg:#0D0A1E; --surface:#161130; --surface-2:#1B1540; --surface-3:#241C55;
+  --ink:#F4F0FF; --ink-2:#A79FCB; --line:#332A63;
+  --accent:#FF3D8A; --accent-2:#56E1E8;
+  --deep:#241C55; --on-deep:#F4F0FF;
+  --pos:#56E1E8; --neg:#FF6B8A;
+  --track:#241C55;
+  --jewel:linear-gradient(135deg,#FF3D8A 0%,#B14BFF 55%,#56E1E8 100%);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#111413; --surface:#191E1C; --surface-2:#212724; --surface-3:#2A312E;
-    --ink:#E9E6DC; --ink-2:#939D98; --line:#2C3330;
-    --accent:#D3B279; --deep:#20423C; --on-deep:#E8EFEB;
-    --pos:#79C29A; --neg:#E0897B;
-    --track:#262D2A;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#111413; --surface:#191E1C; --surface-2:#212724; --surface-3:#2A312E;
-  --ink:#E9E6DC; --ink-2:#939D98; --line:#2C3330;
-  --accent:#D3B279; --deep:#20423C; --on-deep:#E8EFEB;
-  --pos:#79C29A; --neg:#E0897B;
-  --track:#262D2A;
-}
-
 *{box-sizing:border-box}
 body{
   margin:0; background:var(--bg); color:var(--ink);
@@ -341,54 +331,207 @@ input.money{text-align:right; font-variant-numeric:tabular-nums; font-weight:600
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* ---------- документ PDF ---------- */
-#sheet{position:fixed; left:-20000px; top:0; width:780px}
+/* ---------- документ PDF: каждая .pg — точный лист A4 ---------- */
+#sheet{position:fixed; left:-20000px; top:0; width:210mm}
 .pg{
-  width:780px; background:#FFFFFF; color:#243634; font-family:"Manrope",Arial,sans-serif;
-  font-size:12.5px; line-height:1.5; padding:0; position:relative;
+  width:210mm; height:297mm; overflow:hidden;
+  background:#FFFFFF; color:#1E1A3C; font-family:"Manrope",Arial,sans-serif;
+  font-size:12.5px; line-height:1.5; position:relative;
 }
-.pg + .pg{margin-top:36px}
-.pg .ph{display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid #DDDCD4; padding-bottom:9px; margin-bottom:22px}
-.pg .ph .l{font-size:12px; font-weight:700}
-.pg .ph .r{font-size:11px; color:#7A8580}
+.pgi{
+  width:100%; height:100%; padding:15mm 14mm 12mm;
+  box-sizing:border-box; display:flex; flex-direction:column;
+}
+.pg + .pg{margin-top:24px}
+.pg .ph{display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid #DCD8EC; padding-bottom:9px; margin-bottom:20px; flex:0 0 auto}
+.pg .ph .l{font-size:11.5px; font-weight:800; letter-spacing:.02em}
+.pg .ph .r{font-size:10.5px; color:#6F6A93}
 .pg h3{font-size:22px; font-weight:800; margin:0 0 6px; letter-spacing:-.02em}
-.pg .psub{font-size:12.5px; color:#7A8580; margin:0 0 18px}
-.pg .pno{font-size:11px; font-weight:700; color:#C7A66A; letter-spacing:.1em; text-transform:uppercase; margin-bottom:5px}
-.pg .pblk{margin-bottom:22px}
-.pg .pblk h4{font-size:16px; font-weight:700; margin:0 0 4px; letter-spacing:-.01em}
-.pg .pd{font-size:11.5px; color:#7A8580; margin:0 0 10px}
+.pg .psub{font-size:12.5px; color:#6F6A93; margin:0 0 18px; max-width:46em}
+.pg .pno{font-size:10.5px; font-weight:800; color:#D6246E; letter-spacing:.12em; text-transform:uppercase; margin:0 0 5px}
+.pg .pblk{margin-bottom:20px}
+.pg .pblk:last-of-type{margin-bottom:0}
+.pg .pblk h4{font-size:16.5px; font-weight:800; margin:0 0 4px; letter-spacing:-.01em}
+.pg .pd{font-size:11.5px; color:#6F6A93; margin:0 0 10px}
 .pg table{width:100%; border-collapse:collapse; font-size:12px}
-.pg td{padding:7px 0; border-bottom:1px solid #EEEDE6}
+.pg td{padding:6.5px 0; border-bottom:1px solid #EEECF6}
 .pg tr:last-child td{border-bottom:0}
 .pg .n{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600}
-.pg .th td{font-size:10.5px; color:#7A8580; font-weight:600; border-bottom:1px solid #DDDCD4}
-.pg .tt td{font-weight:800; border-top:1px solid #DDDCD4; border-bottom:0; padding-top:9px; font-size:13px}
-.pg .cards{display:flex; gap:12px; margin-bottom:20px}
-.pg .cbox{flex:1; border:1px solid #DDDCD4; border-radius:12px; padding:16px 18px}
-.pg .cbox .k{font-size:11px; color:#7A8580; margin-bottom:6px}
-.pg .cbox .v{font-size:26px; font-weight:800; letter-spacing:-.02em; line-height:1.05; font-variant-numeric:tabular-nums}
-.pg .cbox .s{font-size:10.5px; color:#7A8580; margin-top:4px}
-.pg .cbox--deep{background:#173F3A; border-color:#173F3A; color:#F7F5EF}
-.pg .cbox--deep .k,.pg .cbox--deep .s{color:rgba(247,245,239,.7)}
-.pg .pread{border:1px solid #DDDCD4; border-radius:12px; background:#F7F5EF; padding:15px 17px; font-size:12.5px; margin-bottom:20px}
+.pg .th td{font-size:10.5px; color:#6F6A93; font-weight:600; border-bottom:1px solid #DCD8EC}
+.pg .tt td{font-weight:800; border-top:1px solid #DCD8EC; border-bottom:0; padding-top:9px; font-size:13px}
+.pg .cards{display:flex; gap:10px; margin-bottom:12px}
+.pg .cbox{flex:1; border:1px solid #DCD8EC; border-radius:12px; padding:14px 16px}
+.pg .cbox .k{font-size:10.5px; color:#6F6A93; margin-bottom:5px}
+.pg .cbox .v{font-size:23px; font-weight:800; letter-spacing:-.02em; line-height:1.05; font-variant-numeric:tabular-nums}
+.pg .cbox .s{font-size:10px; color:#6F6A93; margin-top:4px}
+.pg .cbox--deep{background:#2A2160; border-color:#2A2160; color:#F6F4FF}
+.pg .cbox--deep .k,.pg .cbox--deep .s{color:rgba(247,245,239,.72)}
+.pg .pread{border:1px solid #DCD8EC; border-radius:12px; background:#F6F4FF; padding:13px 15px; font-size:11.5px; margin-top:10px}
 .pg .pread b{font-weight:800}
-.pg .pbar{height:10px; background:#E4E2D8; border-radius:5px; position:relative; margin:7px 0 5px}
-.pg .pbar i{display:block; height:100%; border-radius:5px; background:#173F3A}
-.pg .pbar u{position:absolute; top:-3px; bottom:-3px; width:2px; background:#243634; opacity:.45}
-.pg .pfoot{margin-top:20px; border-top:1px solid #DDDCD4; padding-top:9px; font-size:10.5px; color:#7A8580; display:flex; justify-content:space-between}
-.pg .pauth{margin-top:24px; border-top:1px solid #DDDCD4; padding-top:14px; font-size:11px; color:#7A8580}
-.pg .pauth b{display:block; font-size:12.5px; color:#243634; font-weight:800; margin-bottom:2px}
+.pg .pbar{height:9px; background:#E6E2F4; border-radius:5px; position:relative; margin:7px 0 4px}
+.pg .pbar i{display:block; height:100%; border-radius:5px; background:#2A2160}
+.pg .pbar u{position:absolute; top:-3px; bottom:-3px; width:2px; background:#1E1A3C; opacity:.45}
+.pg .prow{display:flex; justify-content:space-between; gap:12px; font-size:11px; color:#6F6A93}
+.pg .pbarrow{margin-bottom:13px}
+.pg .pbarrow .bn{font-weight:700; font-size:12.5px; color:#1E1A3C}
+.pg .pbarrow .bv{font-weight:800; font-size:14px; color:#1E1A3C; font-variant-numeric:tabular-nums}
+.pg .pbarrow .bv i{font-style:normal; font-weight:500; font-size:10.5px; color:#6F6A93}
+.pg .pnote{font-size:10.5px; color:#6F6A93}
+.pg .pfoot{margin-top:auto; border-top:1px solid #DCD8EC; padding-top:9px; font-size:10px; color:#6F6A93; display:flex; justify-content:space-between; flex:0 0 auto}
+.pg .pauth{margin-top:16px; border-top:1px solid #DCD8EC; padding-top:12px; font-size:10.5px; color:#6F6A93}
+.pg .pauth b{display:block; font-size:12.5px; color:#1E1A3C; font-weight:800; margin-bottom:2px}
 
-@page{size:A4 portrait; margin:12mm}
+/* обложка */
+.pg .pcover{flex:1 1 auto; display:flex; flex-direction:column}
+.pg .pbig{font-size:40px; font-weight:800; letter-spacing:-.03em; line-height:1.02; margin:0 0 10px}
+.pg .pcover .psub{font-size:14px; margin-bottom:26px; max-width:32em}
+.pg .cards--hero{margin-bottom:18px}
+.pg .cards--hero .cbox{padding:20px 20px}
+.pg .cards--hero .cbox .v{font-size:28px}
+.pg .pread--lead{font-size:12.5px; padding:16px 18px; margin:0 0 18px}
+.pg .pcover__foot{margin-top:auto; font-size:10.5px; color:#6F6A93}
+.pg .pshape{margin-top:22px}
+.pg .pstack{display:flex; height:26px; border-radius:7px; overflow:hidden; background:#E6E2F4; margin:8px 0 12px}
+.pg .pstack i{display:block; height:100%}
+.pg .plegend{display:flex; flex-wrap:wrap; gap:8px 20px}
+.pg .plegend .lg{display:flex; align-items:center; gap:7px; font-size:11px; color:#6F6A93}
+.pg .plegend .lg b{width:9px; height:9px; border-radius:2px; display:inline-block}
+.pg .plegend .lg u{text-decoration:none; font-weight:700; color:#1E1A3C; font-variant-numeric:tabular-nums}
+
+@page{size:A4 portrait; margin:0}
 @media print{
-  html,body{background:#FFFFFF; color:#243634}
+  *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  html,body{background:#FFFFFF; color:#1E1A3C}
   .wrap{display:none!important}
   #sheet{position:static; left:auto; top:auto; width:auto}
-  .pg{
-    width:auto; min-height:0!important; padding-bottom:0!important;
-    page-break-after:always; break-after:page;
-  }
+  .pg{margin:0!important; page-break-after:always; break-after:page; box-shadow:none}
   .pg:last-child{page-break-after:auto; break-after:auto}
-  .pg .pblk, .pg .cards, .pg table{page-break-inside:avoid; break-inside:avoid}
+}
+
+/* ============================================================
+   Тематический слой: концертная ночь, слёзы-бриллианты
+   ============================================================ */
+body{
+  background:
+    radial-gradient(900px 520px at 78% -8%, rgba(255,61,138,.20), transparent 60%),
+    radial-gradient(760px 480px at 8% 4%, rgba(86,225,232,.14), transparent 62%),
+    var(--bg);
+  background-attachment:fixed;
+}
+h1,h2{font-family:"Unbounded","Manrope",system-ui,sans-serif; letter-spacing:-.03em}
+h1{font-weight:800}
+h2{font-weight:700}
+
+.brand__dot{background:var(--jewel); box-shadow:0 0 12px rgba(255,61,138,.7)}
+.brand__mark{font-family:"Unbounded","Manrope",sans-serif; font-weight:700; letter-spacing:-.01em}
+
+.kicker,.intro .kicker,.rhero .kicker,.step__no,.sec__no{color:var(--accent)}
+
+/* кнопки — самоцветный градиент */
+.btn{background:var(--jewel); border-color:transparent; color:#120E28; font-weight:700}
+.btn:hover{opacity:.9}
+.btn--ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+.btn--ghost:hover{background:var(--surface-2); border-color:var(--accent); color:var(--ink)}
+.btn--quiet{background:transparent; border-color:transparent; color:var(--ink-2)}
+.btn--quiet:hover{background:var(--surface-2); color:var(--ink)}
+
+/* поля */
+input,select{background:var(--surface-2); border-color:var(--line); color:var(--ink)}
+input::placeholder{color:var(--ink-2); opacity:.7}
+input:hover,select:hover{border-color:var(--accent-2)}
+input:focus,select:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(255,61,138,.25)}
+.addbtn{border-color:var(--line); color:var(--ink-2)}
+.addbtn:hover{border-color:var(--accent); color:var(--ink)}
+
+/* карточки */
+.card,.tbl,.stat,.bignum,.pointa__grid,.summary,.actions,.shot{
+  background:var(--surface); border-color:var(--line);
+}
+.card--flat,.trow--head,.trow--sum,.steptotal,.readout,.actions,.howto,.mismatch{
+  background:var(--surface-2); border-color:var(--line);
+}
+.pointa__grid{background:var(--line)}
+.pointa__cell{background:var(--surface)}
+
+/* акцентная карточка остатка — главный самоцвет страницы */
+.stat--accent{background:var(--jewel); border-color:transparent; color:#120E28}
+.stat--accent .stat__k,.stat--accent .stat__s{color:rgba(18,14,40,.72)}
+.fitem--res{background:var(--jewel); border-color:transparent; color:#120E28}
+.fitem--res .k{color:rgba(18,14,40,.72)}
+
+/* блок цели */
+.goal{background:linear-gradient(135deg,#241C55 0%,#3A1E63 100%); border-color:var(--line)}
+.goal__name{color:var(--ink-2)}
+.goal__grid .k{color:var(--ink-2)}
+.tl__line{background:rgba(244,240,255,.2)}
+.tl__dot--a{background:rgba(244,240,255,.6)}
+.tl__dot--b{background:var(--accent); box-shadow:0 0 10px rgba(255,61,138,.8)}
+.tl__ends span{color:var(--ink-2)}
+
+/* полосы распределения */
+.bar__fill{background:var(--jewel)}
+.bar--soft .bar__fill{background:var(--ink-2)}
+.bar--gold .bar__fill{background:var(--accent-2)}
+.bar__mark{background:var(--ink)}
+.prog__fill{background:var(--jewel)}
+
+.pos{color:var(--accent-2)} .neg{color:var(--neg)}
+.cta,.card--deep{background:linear-gradient(135deg,#241C55 0%,#3A1E63 100%); border-color:var(--line); color:var(--ink)}
+
+/* ---------- шапка концерта ---------- */
+.shakira{
+  position:relative; overflow:hidden; border-radius:22px; margin:26px 0 0;
+  padding:34px 32px; border:1px solid var(--line);
+  background:
+    radial-gradient(520px 320px at 88% 0%, rgba(255,61,138,.34), transparent 62%),
+    radial-gradient(420px 300px at 4% 100%, rgba(86,225,232,.22), transparent 60%),
+    linear-gradient(140deg,#1B1540 0%,#140F33 100%);
+}
+.shakira__tag{
+  display:inline-flex; align-items:center; gap:9px; font-size:12.5px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--accent-2); margin-bottom:16px;
+}
+.shakira h2{
+  font-size:clamp(26px,4.4vw,40px); line-height:1.02; margin-bottom:12px;
+  background:var(--jewel); -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:var(--accent);
+}
+.shakira__es{font-family:"Unbounded",sans-serif; font-size:15px; font-weight:500; color:var(--ink); margin-bottom:6px; letter-spacing:-.01em}
+.shakira__ru{font-size:15px; color:var(--ink-2); max-width:38rem}
+.shakira__meta{display:flex; flex-wrap:wrap; gap:8px; margin-top:20px}
+.shakira__meta span{
+  background:rgba(244,240,255,.07); border:1px solid var(--line); border-radius:999px;
+  padding:7px 14px; font-size:13px; color:var(--ink-2);
+}
+.shakira__meta b{color:var(--ink); font-weight:700}
+
+/* бриллиантовая слеза — знак альбома, нарисован, не взят из макетов */
+.tear{flex:0 0 auto; filter:drop-shadow(0 0 6px rgba(86,225,232,.55))}
+
+/* ---------- концертная атмосфера: всё нарисовано, ничего не заимствовано ---------- */
+.shakira{min-height:360px; display:flex; align-items:center}
+.shakira__in{position:relative; z-index:3; width:100%}
+.shakira__fx,.shakira__crowd{position:absolute; left:0; right:0; pointer-events:none; display:block}
+.shakira__fx{top:0; bottom:0; width:100%; height:100%; z-index:1; opacity:.9}
+.shakira__crowd{bottom:0; width:100%; height:150px; z-index:2}
+.shakira__beams{position:absolute; inset:0; z-index:1; overflow:hidden; pointer-events:none}
+.shakira__beams i{
+  position:absolute; top:-40%; width:130px; height:190%;
+  background:linear-gradient(to bottom, rgba(255,255,255,.22), rgba(255,255,255,0) 72%);
+  filter:blur(18px); transform-origin:top center; mix-blend-mode:screen;
+}
+.shakira__beams i:nth-child(1){left:14%; transform:rotate(14deg); background:linear-gradient(to bottom, rgba(255,61,138,.42), transparent 70%)}
+.shakira__beams i:nth-child(2){left:38%; transform:rotate(-9deg); background:linear-gradient(to bottom, rgba(86,225,232,.38), transparent 72%)}
+.shakira__beams i:nth-child(3){left:62%; transform:rotate(7deg); background:linear-gradient(to bottom, rgba(177,75,255,.40), transparent 70%)}
+.shakira__beams i:nth-child(4){left:84%; transform:rotate(-15deg); background:linear-gradient(to bottom, rgba(255,255,255,.26), transparent 68%)}
+@media (max-width:640px){
+  .shakira{min-height:320px}
+  .shakira__crowd{height:92px}
+  .shakira__beams i{width:90px}
+}
+
+@media (max-width:640px){
+  .shakira{padding:24px 20px; border-radius:18px}
 }
 
 /* ---------- iPhone: числа не должны становиться телефонами ----------
@@ -422,16 +565,122 @@ img{max-width:100%}
     <span class="brand__by">Инструмент финансового консультанта · <a href="https://instagram.com/ainazik.mamaevaa" target="_blank" rel="noopener">@ainazik.mamaevaa</a></span>
   </header>
 
+  <!-- шапка концерта -->
+  <section class="shakira">
+    <canvas class="shakira__fx" id="fxLights" aria-hidden="true"></canvas>
+    <div class="shakira__beams" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <canvas class="shakira__crowd" id="fxCrowd" aria-hidden="true"></canvas>
+    <div class="shakira__in">
+    <span class="shakira__tag">
+      <svg class="tear" width="15" height="19" viewBox="0 0 15 19" aria-hidden="true">
+        <path d="M7.5 0 L15 8.2 L7.5 19 L0 8.2 Z" fill="#56E1E8" opacity=".9"/>
+        <path d="M7.5 0 L15 8.2 L7.5 8.2 Z" fill="#FF3D8A" opacity=".85"/>
+      </svg>
+      18 октября · Bishkek Arena
+    </span>
+    <h2>Las mujeres ya no lloran</h2>
+    <p class="shakira__es">…las mujeres facturan.</p>
+    <p class="shakira__ru">Женщины больше не плачут — женщины считают. Альбом, с которым Шакира едет в тур, про то, как слёзы становятся бриллиантами. Эта карта — про то же самое, только в сомах.</p>
+    <div class="shakira__meta">
+      <span>Билеты <b>12 000 – 40 000 сом</b></span>
+      <span>Продажа с <b>1 октября, 09:00</b></span>
+      <span>Только на <b>GovTicket</b></span>
+      <span>Возраст <b>7+</b></span>
+    </div>
+    </div>
+  </section>
+
+  <script>
+  /* Атмосфера рисуется на canvas: огоньки телефонов в зале и силуэт толпы.
+     Ничего не загружается извне — значит ничего не отвалится и никому
+     не принадлежит, кроме этой страницы. */
+  (function(){
+    function dpi(c){
+      var r = c.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+      c.width = Math.max(1, Math.round(r.width * d));
+      c.height = Math.max(1, Math.round(r.height * d));
+      var x = c.getContext("2d");
+      x.setTransform(d, 0, 0, d, 0, 0);
+      return {x:x, w:r.width, h:r.height};
+    }
+    function lights(){
+      var c = document.getElementById("fxLights"); if(!c) return;
+      var g = dpi(c), x = g.x;
+      x.clearRect(0, 0, g.w, g.h);
+      var tint = ["255,61,138", "86,225,232", "177,75,255", "255,255,255"];
+      /* сверху редкие крупные блики, ниже — плотная россыпь огоньков зала */
+      for(var i=0;i<90;i++){
+        var px = Math.random() * g.w;
+        var py = Math.pow(Math.random(), 0.6) * g.h;
+        var r  = 1 + Math.random() * (py / g.h) * 5;
+        var t  = tint[(Math.random() * tint.length) | 0];
+        var a  = 0.12 + Math.random() * 0.5 * (py / g.h + 0.35);
+        var rad = x.createRadialGradient(px, py, 0, px, py, r * 4);
+        rad.addColorStop(0, "rgba(" + t + "," + a + ")");
+        rad.addColorStop(1, "rgba(" + t + ",0)");
+        x.fillStyle = rad;
+        x.beginPath(); x.arc(px, py, r * 4, 0, 6.2832); x.fill();
+      }
+    }
+    function crowd(){
+      var c = document.getElementById("fxCrowd"); if(!c) return;
+      var g = dpi(c), x = g.x;
+      x.clearRect(0, 0, g.w, g.h);
+      /* три плана вглубь: дальний мельче и светлее, ближний крупный и чёрный */
+      [{y:g.h*0.34, s:0.58, col:"rgba(12,8,30,.42)", hands:0.10},
+       {y:g.h*0.56, s:0.80, col:"rgba(9,6,24,.70)",  hands:0.18},
+       {y:g.h*0.82, s:1.05, col:"rgba(5,3,16,.95)",  hands:0.26}].forEach(function(L){
+        var px = -20;
+        while(px < g.w + 30){
+          var hr = (6 + Math.random() * 4.5) * L.s;            // радиус головы
+          var hy = L.y + (Math.random() * 10 - 5) * L.s;
+          var sw = hr * (1.9 + Math.random() * 0.7);           // полуширина плеч
+          x.fillStyle = L.col;
+
+          if(Math.random() < L.hands){                          // поднятая рука
+            x.save();
+            x.translate(px + hr * (Math.random() < .5 ? -1.1 : 1.1), hy);
+            x.rotate((Math.random() - 0.5) * 0.7);
+            x.beginPath();
+            x.roundRect ? x.roundRect(-hr*0.24, -hr*3.6, hr*0.48, hr*3.6, hr*0.24)
+                        : x.rect(-hr*0.24, -hr*3.6, hr*0.48, hr*3.6);
+            x.fill();
+            x.restore();
+          }
+
+          x.beginPath();                                        // голова
+          x.arc(px, hy, hr, 0, 6.2832);
+          x.fill();
+
+          x.beginPath();                                        // шея и плечи одной кривой
+          x.moveTo(px - sw, g.h);
+          x.quadraticCurveTo(px - sw * 0.96, hy + hr * 1.5, px - hr * 0.62, hy + hr * 1.05);
+          x.quadraticCurveTo(px, hy + hr * 0.5, px + hr * 0.62, hy + hr * 1.05);
+          x.quadraticCurveTo(px + sw * 0.96, hy + hr * 1.5, px + sw, g.h);
+          x.closePath();
+          x.fill();
+
+          px += sw * (1.25 + Math.random() * 0.75);
+        }
+      });
+    }
+    function draw(){ lights(); crowd(); }
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", draw);
+    else draw();
+    var t; window.addEventListener("resize", function(){ clearTimeout(t); t = setTimeout(draw, 200); });
+  })();
+  </script>
+
   <!-- ЭКРАН 0 -->
   <section class="intro" id="scrIntro">
     <p class="kicker">7 шагов · 5 минут</p>
-    <h1>Финансовая карта</h1>
-    <p class="sub">Твоя точка А</p>
-    <p class="lede muted" style="font-size:17px; margin-bottom:28px">Заполняешь свои данные — получаешь понятную картину: сколько приходит, сколько уходит на основные расходы, что остаётся в конце месяца и когда при таком остатке можно закрыть свою цель.</p>
+    <h1>Потянешь ли ты Шакиру</h1>
+    <p class="sub">Твоя точка А перед 18 октября</p>
+    <p class="lede muted" style="font-size:17px; margin-bottom:28px">Заполняешь свои данные — получаешь понятную картину: сколько приходит, сколько уходит, что остаётся в конце месяца. И честный ответ, во что обойдётся концерт и что после него будет с твоим запасом и целью.</p>
     <ul class="intro__list">
       <li><span class="intro__n">1</span><span>Отвечаешь на вопросы <b>в семи коротких шагах</b> — доход, расходы, выплаты, запас, цель.</span></li>
       <li><span class="intro__n">2</span><span>Все цифры <b>считаются автоматически</b>. Меняешь любую — пересчитывается вся карта.</span></li>
-      <li><span class="intro__n">3</span><span>В конце — <b>твоя точка А</b> и карта на пять страниц, которую можно забрать себе.</span></li>
+      <li><span class="intro__n">3</span><span>В конце — <b>твоя точка А</b>, расчёт по билетам и документ, который можно забрать себе.</span></li>
     </ul>
     <div class="intro__acts">
       <button class="btn" id="btnStart">Заполнить свои данные</button>
@@ -485,6 +734,30 @@ var PEOPLE_BASE = [
 var MONTH_DAT = ["январю","февралю","марту","апрелю","маю","июню","июлю","августу","сентябрю","октябрю","ноябрю","декабрю"];
 var MONTH_NOM = ["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"];
 
+/* ===== Концерт Шакиры, Bishkek Arena =====
+   Цены и даты — из официальных объявлений о продаже (см. подпись под блоком).
+   Месяцы в JS с нуля: 9 — октябрь. */
+var CONCERT = {
+  artist:"Шакира",
+  venue:"Bishkek Arena",
+  addr:"ул. Алтын-Бешик, 77/2а",
+  show: new Date(2026, 9, 18, 19, 0),
+  sale: new Date(2026, 9, 1, 9, 0),
+  platform:"GovTicket",
+  age:"7+",
+  seats:[
+    {n:"Ограниченный обзор", p:12000},
+    {n:"Трибуны, категория 5", p:13500},
+    {n:"Трибуны, категория 4", p:22000},
+    {n:"Ground admission — танцпол", p:27000},
+    {n:"Трибуны, категория 3", p:28000},
+    {n:"Skybox", p:30000},
+    {n:"Трибуны, категория 2", p:34000},
+    {n:"Трибуны, категория 1", p:40000},
+    {n:"Fanzone 1 и 2 — у сцены", p:40000}
+  ]
+};
+
 function mkRows(def){
   return def.map(function(b){ return {n:b.n, v:0, key:b.key||null, bucket:b.bucket||"need", base:true}; });
 }
@@ -496,7 +769,9 @@ function blank(){
     flexible:mkRows(FLEX_BASE),
     people:mkRows(PEOPLE_BASE),
     debts:[{n:"",left:0,due:"",pay:0}],
-    reserve:0, goalAmount:0, goalName:"", demo:false
+    reserve:0, goalAmount:0, goalName:"",
+    concert:{seat:3, qty:2, extra:0},
+    demo:false
   };
 }
 function demoState(){
@@ -517,6 +792,7 @@ function demoState(){
     {n:"Долг родственнику", left:15000, due:"31.12.2026", pay:1000}
   ];
   s.reserve = 40000; s.goalAmount = 250000; s.goalName = "Первый взнос за квартиру";
+  s.concert = {seat:3, qty:2, extra:3000};
   return s;
 }
 var S = blank();
@@ -609,7 +885,25 @@ function calculate(){
     }
   }
 
+  /* --- концерт --- */
+  var cc = S.concert || {seat:3, qty:2, extra:0};
+  var seat = CONCERT.seats[cc.seat] || CONCERT.seats[3];
+  var concertQty = Math.max(0, +cc.qty || 0);
+  var concertExtra = Math.max(0, +cc.extra || 0);
+  var concertTickets = seat.p * concertQty;
+  var concertTotal = concertTickets + concertExtra;
+  /* во сколько месяцев накоплений обходится поход и на сколько отодвигает цель */
+  var concertMonths = monthlyRemaining > 0 ? concertTotal / monthlyRemaining : null;
+  var concertGoalDelayDays = concertMonths === null ? null : Math.round(concertMonths * 30);
+  /* сколько дней запаса съест, если платить из него */
+  var dayCost = monthlyNeed > 0 ? monthlyNeed / 30 : 0;
+  var concertReserveDays = dayCost > 0 ? Math.round(concertTotal / dayCost) : null;
+
   C = {
+    concertSeat:seat, concertQty:concertQty, concertExtra:concertExtra,
+    concertTickets:concertTickets, concertTotal:concertTotal,
+    concertMonths:concertMonths, concertGoalDelayDays:concertGoalDelayDays,
+    concertReserveDays:concertReserveDays,
     minimumIncome:minimumIncome, maximumIncome:maximumIncome,
     mandatoryExpenses:mandatoryExpenses, flexibleExpenses:flexibleExpenses,
     peopleExpensesMonthly:peopleExpensesMonthly, peopleExpensesYearly:peopleExpensesYearly,
@@ -654,6 +948,14 @@ function load(){
     b.reserve = +o.reserve || 0;
     b.goalAmount = +o.goalAmount || 0;
     b.goalName = String(o.goalName || "");
+    if(o.concert){
+      var si = +o.concert.seat;
+      b.concert = {
+        seat: (si >= 0 && si < CONCERT.seats.length) ? si : 3,
+        qty:  Math.max(0, Math.min(20, +o.concert.qty || 0)),
+        extra: +o.concert.extra || 0
+      };
+    }
     b.demo = !!o.demo;
     if(Array.isArray(o.income) && o.income.length)
       b.income = o.income.map(function(r){ return {n:String(r.n||""), min:+r.min||0, max:+r.max||0}; });
@@ -983,6 +1285,127 @@ function barRow(name, nowP, targetP, sumV, mod){
     + '<div class="bar__sub">'+som(sumV)+' в месяц</div></div>';
 }
 
+/* ================= концерт ================= */
+function daysBetween(a, b){
+  return Math.ceil((b - a) / 86400000);
+}
+function concertTiming(){
+  var now = new Date();
+  if(now < CONCERT.sale){
+    var d = daysBetween(now, CONCERT.sale);
+    return "Билеты поступают в продажу <b>1 октября в 09:00</b> на " + CONCERT.platform
+      + (d <= 0 ? " — уже сегодня." : d === 1 ? " — это завтра." : " — через " + d + " " + plural(d,["день","дня","дней"]) + ".")
+      + " Копить времени нет, считаем из того, что есть сейчас.";
+  }
+  if(now < CONCERT.show){
+    var s = daysBetween(now, CONCERT.show);
+    return "Продажа уже идёт на " + CONCERT.platform + ". До концерта <b>" + s + " " + plural(s,["день","дня","дней"]) + "</b>.";
+  }
+  return "Концерт уже прошёл — расчёт остаётся как пример.";
+}
+function concertReadout(){
+  if(C.concertQty <= 0) return "Поставь количество билетов — и посчитаю, во что обойдётся поход.";
+  if(C.minimumIncome <= 0) return "Доход не заполнен, поэтому сравнить поход не с чем. Вернись к шагу 1.";
+
+  var t = "Поход обойдётся в <b>" + som(C.concertTotal) + "</b>";
+  if(C.concertExtra > 0) t += " — билеты " + som(C.concertTickets) + " и " + som(C.concertExtra) + " сверху на дорогу и прочее";
+  t += ". ";
+
+  if(C.monthlyRemaining <= 0){
+    t += "Остатка в месяц нет, значит эти деньги берутся из запаса или в долг. ";
+  } else if(C.concertTotal <= C.monthlyRemaining){
+    t += "Это укладывается в твой месячный остаток: после похода от него останется <b>"
+      + som(C.monthlyRemaining - C.concertTotal) + "</b>. ";
+  } else {
+    var m = C.concertMonths;
+    /* дробное число месяцев по-русски всегда «месяца»: 7,4 месяца */
+    t += "Это <b>" + (m < 1 ? "меньше месяца" : (Math.round(m*10)/10).toString().replace(".", ",") + " месяца")
+      + "</b> твоих накоплений при остатке " + som(C.monthlyRemaining) + " в месяц. ";
+  }
+
+  if(C.financialReserve > 0 && C.concertReserveDays !== null){
+    if(C.concertTotal > C.financialReserve){
+      t += "Из запаса целиком не выйдет: там " + som(C.financialReserve) + ". ";
+    } else {
+      t += "Если платить из запаса, он сократится на <b>" + C.concertReserveDays + " "
+        + plural(C.concertReserveDays,["день","дня","дней"]) + "</b> — с " + C.reserveDays + " до "
+        + Math.max(0, C.reserveDays - C.concertReserveDays) + ". ";
+    }
+  }
+
+  if(C.goalAmount > 0 && C.monthlyRemaining > 0 && C.concertGoalDelayDays !== null && C.concertGoalDelayDays > 0){
+    t += "И цель «" + esc(S.goalName || "без названия") + "» отодвинется примерно на <b>"
+      + C.concertGoalDelayDays + " " + plural(C.concertGoalDelayDays,["день","дня","дней"]) + "</b>.";
+  }
+  return t;
+}
+function concertSection(){
+  var opts = CONCERT.seats.map(function(s, i){
+    return '<option value="'+i+'"'+(i === (S.concert.seat|0) ? ' selected' : '')+'>'
+      + esc(s.n) + " — " + som(s.p) + '</option>';
+  }).join("");
+
+  return '<section class="sec"><div class="sec__head"><div class="sec__ttl">'
+    + '<span class="sec__no">★</span><h2>Концерт Шакиры — потянешь?</h2></div></div>'
+    + '<p class="sec__desc">18 октября, ' + CONCERT.venue + '. Посчитаем поход не отдельно, а внутри твоего бюджета: '
+    + 'сколько это в месяцах накоплений и что будет с запасом и целью.</p>'
+
+    + '<div class="card"><div class="grid3" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px">'
+    + '<label><span class="field__lbl">Категория места</span>'
+    + '<select id="cSeat" style="width:100%; font:inherit; font-size:15px; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:11px 13px; margin-top:6px; cursor:pointer">'
+    + opts + '</select></label>'
+    + '<label><span class="field__lbl">Сколько билетов</span>'
+    + '<input class="money" id="cQty" type="text" inputmode="numeric" style="margin-top:6px" aria-label="Сколько билетов"></label>'
+    + '<label><span class="field__lbl">Сверху на дорогу и прочее</span>'
+    + '<input class="money" id="cExtra" type="text" inputmode="numeric" style="margin-top:6px" aria-label="Дополнительные расходы"></label>'
+    + '</div></div>'
+
+    + '<div class="bignums">'
+    + '<div class="bignum"><div class="k">Билеты</div><div class="v" id="cTickets">—</div><div class="s" id="cTicketsSub"></div></div>'
+    + '<div class="bignum"><div class="k">Весь поход</div><div class="v" id="cTotal">—</div><div class="s">вместе с дорогой</div></div>'
+    + '<div class="bignum"><div class="k">Это от остатка</div><div class="v" id="cShare">—</div><div class="s">месячных накоплений</div></div>'
+    + '</div>'
+
+    + '<div class="readout" id="cRead"></div>'
+    + '<div class="readout" id="cTime" style="margin-top:12px"></div>'
+    + '<p class="sec__desc" style="margin-top:14px; font-size:13.5px">Цены и даты — из объявлений о старте продаж: '
+    + 'от 12 000 до 40 000 сом, продажа с 1 октября на ' + CONCERT.platform + ', возраст ' + CONCERT.age + '. '
+    + 'VIP-билеты объявлены отдельно и в расчёт не входят.</p>'
+    + '</section>';
+}
+function renderConcertOut(){
+  if(!$("cTickets")) return;
+  $("cTickets").textContent = C.concertQty > 0 ? som(C.concertTickets) : "—";
+  $("cTicketsSub").textContent = C.concertQty > 0
+    ? (C.concertQty + " × " + som(C.concertSeat.p)) : "выбери количество";
+  $("cTotal").textContent = C.concertTotal > 0 ? som(C.concertTotal) : "—";
+  $("cShare").textContent = (C.monthlyRemaining > 0 && C.concertTotal > 0)
+    ? pc(C.concertTotal / C.monthlyRemaining * 100) : "—";
+  $("cRead").innerHTML = concertReadout();
+  $("cTime").innerHTML = concertTiming();
+  /* PDF пересобираем здесь же, иначе документ отстанет от экрана */
+  buildSheet();
+}
+function bindConcert(){
+  var seat = $("cSeat"), qty = $("cQty"), extra = $("cExtra");
+  if(!seat) return;
+  qty.value = S.concert.qty ? fmt(S.concert.qty) : "";
+  extra.value = S.concert.extra ? fmt(S.concert.extra) : "";
+  seat.addEventListener("change", function(){
+    S.concert.seat = +this.value; S.demo = false;
+    calculate(); renderConcertOut(); save();
+  });
+  function onNum(){
+    S.concert.qty = Math.min(20, parseNum(qty.value));
+    S.concert.extra = parseNum(extra.value);
+    S.demo = false;
+    calculate(); renderConcertOut(); save();
+  }
+  qty.addEventListener("input", onNum);
+  extra.addEventListener("input", onNum);
+  renderConcertOut();
+}
+
 function renderResult(){
   calculate();
   var who = (S.name || "").trim();
@@ -1085,6 +1508,9 @@ function renderResult(){
     +  '<div class="r"><b>'+goalDateText()+'</b><span>'+som(C.goalAmount)+'</span></div></div></div>'
     +  '</div><div class="readout">'+goalReadout()+'</div></section>';
 
+  /* --- концерт --- */
+  h += concertSection();
+
   /* --- 08 --- */
   h += '<section class="sec">' + secHead("08","Как распределяются твои деньги","Здесь видно, какая часть дохода сейчас уходит на основные расходы, жизнь и накопления. Рядом — ориентир 50 / 30 / 20.",2)
     +  '<div class="bars">'
@@ -1135,11 +1561,13 @@ function renderResult(){
     +  '<div class="shots" id="shots"></div>'
     +  '</section>';
 
-  h += '<p class="foot">Данные остаются в твоём браузере и никуда не отправляются. Карта сохраняется автоматически — можно закрыть вкладку и вернуться.<br>'
+  h += '<p class="foot">Это не официальный сайт концерта и не продажа билетов: билеты — только на GovTicket. Цены взяты из объявлений о старте продаж и могут измениться.<br>'
+    +  'Данные остаются в твоём браузере и никуда не отправляются. Карта сохраняется автоматически — можно закрыть вкладку и вернуться.<br>'
     +  'Инструмент финансового консультанта · Айназик Мамаева · <a href="https://instagram.com/ainazik.mamaevaa" target="_blank" rel="noopener">@ainazik.mamaevaa</a></p>';
 
   $("scrResult").innerHTML = h;
   bindResultButtons();
+  bindConcert();
   /* документ собираем сразу: тогда на своём хостинге работает и обычный
      Ctrl+P, а не только кнопка */
   buildSheet();
@@ -1199,150 +1627,209 @@ function ptable(head, rows, total){
 }
 function stripTags(s){ var d = document.createElement("div"); d.innerHTML = s; return d.textContent || ""; }
 
+/* Одна полоса на обложке: из чего складывается месяц.
+   Если расходы больше дохода, база — расходы, и хвост уходит в перерасход. */
+function monthShape(){
+  if(C.minimumIncome <= 0 && C.totalExpenses <= 0) return "";
+  var over = C.monthlyRemaining < 0 ? Math.abs(C.monthlyRemaining) : 0;
+  var base = Math.max(C.minimumIncome, C.totalExpenses) || 1;
+  var parts = [
+    {n:"Обязательные",  v:C.mandatoryExpenses,        c:"#2A2160"},
+    {n:"Управляемые",   v:C.flexibleExpenses,         c:"#6F6A93"},
+    {n:"Близкие",       v:C.peopleExpensesMonthly,    c:"#B7B1D6"},
+    {n:"Остаток",       v:Math.max(0, C.monthlyRemaining), c:"#D6246E"},
+    {n:"Перерасход",    v:over,                       c:"#C0392B"}
+  ].filter(function(p){ return p.v > 0; });
+
+  var seg = parts.map(function(p){
+    return '<i style="width:' + (p.v / base * 100) + '%; background:' + p.c + '"></i>';
+  }).join("");
+  var leg = parts.map(function(p){
+    return '<span class="lg"><b style="background:' + p.c + '"></b>' + p.n
+      + ' <u>' + som(p.v) + '</u></span>';
+  }).join("");
+
+  return '<div class="pshape"><p class="pno">Из чего складывается месяц</p>'
+    + '<div class="pstack">' + seg + '</div>'
+    + '<div class="plegend">' + leg + '</div></div>';
+}
+
 function buildSheet(){
   calculate();
   var who = (S.name || "").trim();
-  var PAGES = 5, hdr = function(){
-    return '<div class="ph"><span class="l">Финансовая карта</span><span class="r">'+esc(sheetMonth())+(who ? " · " + esc(who) : "")+'</span></div>';
-  };
-  /* высоту не фиксируем: каждая страница ровно по своему содержимому,
-     иначе снизу остаётся большое пустое поле */
-  var pad = '';
+  var PAGES = 6;
 
-  /* стр. 1 — карта и основные цифры */
-  var p1 = '<div class="pg" '+pad+'>' + hdr()
-    + '<p class="pno">Твоя точка А</p>'
-    + '<h3>Финансовая карта</h3>'
+  /* Каждая страница — точный лист A4. Содержимое лежит в .pgi,
+     и если оно не влезает, fitPages() его чуть ужимает — тогда
+     страница никогда не разваливается на два листа. */
+  function page(n, inner){
+    return '<div class="pg"><div class="pgi">'
+      + '<div class="ph"><span class="l">Финансовая карта</span>'
+      + '<span class="r">' + esc(sheetMonth()) + (who ? " · " + esc(who) : "") + '</span></div>'
+      + inner
+      + '<div class="pfoot"><span>@ainazik.mamaevaa</span><span>' + n + ' / ' + PAGES + '</span></div>'
+      + '</div></div>';
+  }
+  function blk(no, title, desc, body){
+    return '<div class="pblk"><p class="pno">' + no + '</p><h4>' + title + '</h4>'
+      + (desc ? '<p class="pd">' + desc + '</p>' : '') + body + '</div>';
+  }
+
+  /* ---------- стр. 1 — обложка ---------- */
+  var p1 = page(1,
+      '<div class="pcover">'
+    + '<p class="pno">Твоя точка А перед 18 октября</p>'
+    + '<h2 class="pbig">Финансовая карта</h2>'
     + '<p class="psub">Сколько приходит, сколько уходит на основные расходы и что остаётся в конце месяца.</p>'
-    + '<div class="cards">'
+    + '<div class="cards cards--hero">'
     + '<div class="cbox"><div class="k">Доход</div><div class="v">'+som(C.minimumIncome)+'</div><div class="s">минимум в месяц</div></div>'
     + '<div class="cbox"><div class="k">Расходы</div><div class="v">'+som(C.totalExpenses)+'</div><div class="s">основные расходы</div></div>'
     + '<div class="cbox cbox--deep"><div class="k">Остаток</div><div class="v">'+som(C.monthlyRemaining)+'</div><div class="s">остаётся в месяц</div></div>'
     + '</div>'
-    + '<div class="pread"><b>Что сейчас получается.</b> ' + stripTags(summaryText().replace(/<\/p><p>/g," ").replace(/<\/?p>/g,"")) + '</div>'
+    + '<div class="pread pread--lead"><b>Что сейчас получается.</b> '
+    + stripTags(summaryText().replace(/<\/p><p>/g," ").replace(/<\/?p>/g,"")) + '</div>'
     + '<div class="cards">'
     + '<div class="cbox"><div class="k">Финансовый запас</div><div class="v">'+som(C.financialReserve)+'</div><div class="s">'+(C.reserveDays===null?"—":("хватит на "+C.reserveDays+" "+plural(C.reserveDays,["день","дня","дней"])))+'</div></div>'
     + '<div class="cbox"><div class="k">Осталось выплатить</div><div class="v">'+som(C.totalDebt)+'</div><div class="s">'+som(C.monthlyDebtPayments)+' в месяц</div></div>'
     + '<div class="cbox"><div class="k">Ближайшая цель</div><div class="v">'+som(C.goalAmount)+'</div><div class="s">'+(S.goalName?esc(S.goalName):"не названа")+'</div></div>'
     + '</div>'
-    + pfoot(1,PAGES) + '</div>';
+    + monthShape()
+    + '<div class="pcover__foot">Документ собран ' + new Date().toLocaleDateString("ru-RU")
+    + '. Цифры внутри — твои, никуда не отправлялись.</div>'
+    + '</div>');
 
-  /* стр. 2 — доход и расходы */
-  var p2 = '<div class="pg" '+pad+'>' + hdr()
-    + '<div class="pblk"><p class="pno">01</p><h4>Сколько денег приходит</h4>'
-    + '<p class="pd">Все основные источники дохода за месяц.</p>'
-    + ptable(["Источник","Минимум","Максимум"],
-        S.income.map(function(r){ return [(esc(r.n)||"—"), som(r.min), som(r.max)]; }),
-        ["Итого в месяц", som(C.minimumIncome), som(C.maximumIncome)])
-    + '<div class="pread" style="margin-top:12px">Для расчётов берём минимальный доход — <b>'+som(C.minimumIncome)+'</b>. Всё, что приходит сверху, считается дополнительным доходом.</div></div>'
+  /* ---------- стр. 2 — приход и обязательные ---------- */
+  var p2 = page(2,
+      blk("01","Сколько денег приходит","Все основные источники дохода за месяц.",
+        ptable(["Источник","Минимум","Максимум"],
+          S.income.map(function(r){ return [(esc(r.n)||"—"), som(r.min), som(r.max)]; }),
+          ["Итого в месяц", som(C.minimumIncome), som(C.maximumIncome)])
+        + '<div class="pread">Для расчётов берём минимальный доход — <b>'+som(C.minimumIncome)+'</b>. Всё, что приходит сверху, считается дополнительным доходом.</div>')
+    + blk("02","Обязательные расходы","Жильё, коммунальные услуги, связь, обучение, транспорт, кредиты и рассрочки.",
+        ptable(null, S.mandatory.map(function(r){ return [(esc(r.n)||"—"), som(+r.v||0)]; }),
+          ["Обязательные расходы в месяц", som(C.mandatoryExpenses)])
+        + (C.minimumIncome > 0 ? '<div class="pread">После обязательных расходов остаётся <b>'+som(C.afterMandatory)+'</b> из минимального дохода.</div>' : '')));
 
-    + '<div class="pblk"><p class="pno">02</p><h4>Обязательные расходы</h4>'
-    + '<p class="pd">Жильё, коммунальные услуги, связь, обучение, транспорт, кредиты и рассрочки.</p>'
-    + ptable(null, S.mandatory.map(function(r){ return [(esc(r.n)||"—"), som(+r.v||0)]; }),
-        ["Обязательные расходы в месяц", som(C.mandatoryExpenses)])
-    + (C.minimumIncome > 0 ? '<div class="pread" style="margin-top:12px">После обязательных расходов остаётся <b>'+som(C.afterMandatory)+'</b> из минимального дохода.</div>' : '')
-    + '</div>'
+  /* ---------- стр. 3 — управляемые и близкие ---------- */
+  var p3 = page(3,
+      blk("03","Расходы, которыми можно управлять","Продукты, одежда, здоровье, покупки и другие повседневные траты.",
+        ptable(null, S.flexible.map(function(r){ return [(esc(r.n)||"—"), som(+r.v||0)]; }),
+          ["Расходы в месяц", som(C.flexibleExpenses)]))
+    + blk("04","Расходы на близких и события","Помощь родителям и родственникам, подарки, гости и расходы на важные события.",
+        ptable(null, S.people.map(function(r){ return [(esc(r.n)||"—"), som(+r.v||0)]; }),
+          ["В месяц", som(C.peopleExpensesMonthly)])
+        + '<div class="cards" style="margin-top:12px">'
+        + '<div class="cbox"><div class="k">В месяц</div><div class="v">'+som(C.peopleExpensesMonthly)+'</div></div>'
+        + '<div class="cbox"><div class="k">В год</div><div class="v">'+som(C.peopleExpensesYearly)+'</div></div>'
+        + '</div>'
+        + '<div class="pread">Такие расходы появляются не каждый месяц одинаково, но за год складываются в заметную сумму. Поэтому их удобно заранее учитывать в бюджете.</div>'));
 
-    + '<div class="pblk"><p class="pno">03</p><h4>Расходы, которыми можно управлять</h4>'
-    + '<p class="pd">Продукты, одежда, здоровье, покупки и другие повседневные траты.</p>'
-    + ptable(null, S.flexible.map(function(r){ return [(esc(r.n)||"—"), som(+r.v||0)]; }),
-        ["Расходы в месяц", som(C.flexibleExpenses)])
-    + '</div>'
-    + pfoot(2,PAGES) + '</div>';
+  /* ---------- стр. 4 — выплаты и запас ---------- */
+  var p4 = page(4,
+      blk("05","Что ты сейчас выплачиваешь","Кредиты, рассрочки и деньги, которые ты сейчас возвращаешь.",
+        ptable(["Что выплачиваешь","Осталось","До какой даты","Платёж в месяц"],
+          S.debts.map(function(d){ return [(esc(d.n)||"—"), som(d.left), (esc(d.due)||"—"), som(d.pay)]; }),
+          ["Итого", som(C.totalDebt), "", som(C.monthlyDebtPayments)]))
+    + blk("06","Финансовый запас","Сколько денег уже есть в запасе и на сколько времени их хватит при текущих расходах.",
+        '<div class="cards">'
+        + '<div class="cbox"><div class="k">Сейчас есть</div><div class="v">'+som(C.financialReserve)+'</div></div>'
+        + '<div class="cbox"><div class="k">Нужно на месяц</div><div class="v">'+som(C.monthlyNeed)+'</div><div class="s">обязательные расходы и еда</div></div>'
+        + '<div class="cbox"><div class="k">Хватит примерно на</div><div class="v">'+(C.reserveDays===null?"—":(C.reserveDays+" "+plural(C.reserveDays,["день","дня","дней"])))+'</div></div>'
+        + '</div>'
+        + '<div class="pread">'+stripTags(reserveReadout())+'</div>'));
 
-  /* стр. 3 — близкие, выплаты, запас */
-  var p3 = '<div class="pg" '+pad+'>' + hdr()
-    + '<div class="pblk"><p class="pno">04</p><h4>Расходы на близких и события</h4>'
-    + '<p class="pd">Помощь родителям и родственникам, подарки, гости и расходы на важные события.</p>'
-    + ptable(null, S.people.map(function(r){ return [(esc(r.n)||"—"), som(+r.v||0)]; }),
-        ["В месяц", som(C.peopleExpensesMonthly)])
-    + '<div class="cards" style="margin-top:12px">'
-    + '<div class="cbox"><div class="k">В месяц</div><div class="v">'+som(C.peopleExpensesMonthly)+'</div></div>'
-    + '<div class="cbox"><div class="k">В год</div><div class="v">'+som(C.peopleExpensesYearly)+'</div></div>'
-    + '</div>'
-    + '<div class="pread">Такие расходы появляются не каждый месяц одинаково, но за год складываются в заметную сумму. Поэтому их удобно заранее учитывать в бюджете.</div></div>'
+  /* ---------- стр. 5 — остаток и цель ---------- */
+  var p5 = page(5,
+      blk("07","Сколько остаётся","Всё вместе: что приходит минус все основные расходы.",
+        ptable(null, [
+            ["Минимальный доход", som(C.minimumIncome)],
+            ["минус обязательные расходы", som(C.mandatoryExpenses)],
+            ["минус расходы, которыми можно управлять", som(C.flexibleExpenses)],
+            ["минус расходы на близких и события", som(C.peopleExpensesMonthly)]
+          ], ["Остаётся каждый месяц", som(C.monthlyRemaining)])
+        + '<div class="cards" style="margin-top:14px">'
+        + '<div class="cbox cbox--deep"><div class="k">Остаётся в месяц</div><div class="v">'+som(C.monthlyRemaining)+'</div></div>'
+        + '<div class="cbox"><div class="k">За год при таком остатке</div><div class="v">'+som(C.yearlyRemaining)+'</div><div class="s">можно накопить</div></div>'
+        + '</div>')
+    + blk("Цель","Ближайшая финансовая цель", (S.goalName?esc(S.goalName):"Цель пока не названа"),
+        '<div class="cards">'
+        + '<div class="cbox"><div class="k">Сумма цели</div><div class="v">'+som(C.goalAmount)+'</div></div>'
+        + '<div class="cbox"><div class="k">Откладываешь в месяц</div><div class="v">'+som(C.goalMonthlyContribution)+'</div></div>'
+        + '<div class="cbox cbox--deep"><div class="k">Срок</div><div class="v" style="font-size:20px">'+goalDateText()+'</div></div>'
+        + '</div>'
+        + '<div class="pbar"><i style="width:100%"></i></div>'
+        + '<div class="prow"><span>Сейчас · '+esc(sheetMonth())+'</span><span>'+goalDateText()+' · '+som(C.goalAmount)+'</span></div>'
+        + '<div class="pread">'+stripTags(goalReadout())+'</div>'));
 
-    + '<div class="pblk"><p class="pno">05</p><h4>Что ты сейчас выплачиваешь</h4>'
-    + '<p class="pd">Кредиты, рассрочки и деньги, которые ты сейчас возвращаешь.</p>'
-    + ptable(["Что выплачиваешь","Осталось","До какой даты","Платёж в месяц"],
-        S.debts.map(function(d){ return [(esc(d.n)||"—"), som(d.left), (esc(d.due)||"—"), som(d.pay)]; }),
-        ["Итого", som(C.totalDebt), "", som(C.monthlyDebtPayments)])
-    + '</div>'
-
-    + '<div class="pblk"><p class="pno">06</p><h4>Финансовый запас</h4>'
-    + '<p class="pd">Сколько денег уже есть в запасе и на сколько времени их хватит при текущих расходах.</p>'
-    + '<div class="cards">'
-    + '<div class="cbox"><div class="k">Сейчас есть</div><div class="v">'+som(C.financialReserve)+'</div></div>'
-    + '<div class="cbox"><div class="k">Нужно на месяц</div><div class="v">'+som(C.monthlyNeed)+'</div><div class="s">обязательные расходы и еда</div></div>'
-    + '<div class="cbox"><div class="k">Хватит примерно на</div><div class="v">'+(C.reserveDays===null?"—":(C.reserveDays+" "+plural(C.reserveDays,["день","дня","дней"])))+'</div></div>'
-    + '</div>'
-    + '<div class="pread">'+stripTags(reserveReadout())+'</div></div>'
-    + pfoot(3,PAGES) + '</div>';
-
-  /* стр. 4 — остаток и цель */
-  var p4 = '<div class="pg" '+pad+'>' + hdr()
-    + '<div class="pblk"><p class="pno">07</p><h4>Сколько остаётся</h4>'
-    + '<p class="pd">Всё вместе: что приходит минус все основные расходы.</p>'
-    + ptable(null, [
-        ["Минимальный доход", som(C.minimumIncome)],
-        ["минус обязательные расходы", som(C.mandatoryExpenses)],
-        ["минус расходы, которыми можно управлять", som(C.flexibleExpenses)],
-        ["минус расходы на близких и события", som(C.peopleExpensesMonthly)]
-      ], ["Остаётся каждый месяц", som(C.monthlyRemaining)])
-    + '<div class="cards" style="margin-top:14px">'
-    + '<div class="cbox cbox--deep"><div class="k">Остаётся в месяц</div><div class="v">'+som(C.monthlyRemaining)+'</div></div>'
-    + '<div class="cbox"><div class="k">За год при таком остатке</div><div class="v">'+som(C.yearlyRemaining)+'</div><div class="s">можно накопить</div></div>'
-    + '</div></div>'
-
-    + '<div class="pblk"><p class="pno">Цель</p><h4>Ближайшая финансовая цель</h4>'
-    + '<p class="pd">'+(S.goalName?esc(S.goalName):"Цель пока не названа")+'</p>'
-    + '<div class="cards">'
-    + '<div class="cbox"><div class="k">Сумма цели</div><div class="v">'+som(C.goalAmount)+'</div></div>'
-    + '<div class="cbox"><div class="k">Откладываешь в месяц</div><div class="v">'+som(C.goalMonthlyContribution)+'</div></div>'
-    + '<div class="cbox cbox--deep"><div class="k">Ориентировочный срок</div><div class="v" style="font-size:22px">'+goalDateText()+'</div></div>'
-    + '</div>'
-    + '<div class="pbar" style="background:#E4E2D8"><i style="width:100%; background:#173F3A"></i></div>'
-    + '<table><tr><td style="border:0; padding-top:2px">Сейчас · '+esc(sheetMonth())+'</td>'
-    + '<td class="n" style="border:0; padding-top:2px">'+goalDateText()+' · '+som(C.goalAmount)+'</td></tr></table>'
-    + '<div class="pread" style="margin-top:12px">'+stripTags(goalReadout())+'</div></div>'
-    + pfoot(4,PAGES) + '</div>';
-
-  /* стр. 5 — распределение и точка А */
+  /* ---------- стр. 6 — концерт, распределение, итог ---------- */
   var bars = [
-    ["Необходимое", C.essentialPercent, 50, C.essential, "#173F3A"],
-    ["Жизнь и другие расходы", C.lifestylePercent, 30, C.lifestyle, "#7A8580"],
-    ["Накопления и цели", C.savingPercent, 20, C.saving, "#C7A66A"]
+    ["Необходимое", C.essentialPercent, 50, C.essential, "#2A2160"],
+    ["Жизнь и другие расходы", C.lifestylePercent, 30, C.lifestyle, "#6F6A93"],
+    ["Накопления и цели", C.savingPercent, 20, C.saving, "#D6246E"]
   ].map(function(b){
     var w = Math.max(0, Math.min(100, b[1]));
-    return '<div style="margin-bottom:16px"><table><tr><td style="border:0; padding:0 0 4px; font-weight:700; font-size:13px">'+b[0]+'</td>'
-      + '<td class="n" style="border:0; padding:0 0 4px; font-size:15px; font-weight:800">'+(C.minimumIncome>0?pc(b[1]):"—")
-      + '<span style="font-weight:500; color:#7A8580; font-size:11px"> → ориентир '+b[2]+' %</span></td></tr></table>'
+    return '<div class="pbarrow">'
+      + '<div class="prow"><span class="bn">'+b[0]+'</span>'
+      + '<span class="bv">'+(C.minimumIncome>0?pc(b[1]):"—")
+      + '<i> → ориентир '+b[2]+' %</i></span></div>'
       + '<div class="pbar"><i style="width:'+w+'%; background:'+b[4]+'"></i><u style="left:'+b[2]+'%"></u></div>'
-      + '<div style="font-size:11px; color:#7A8580">'+som(b[3])+' в месяц</div></div>';
+      + '<div class="pnote">'+som(b[3])+' в месяц</div></div>';
   }).join("");
 
-  var p5 = '<div class="pg" '+pad+'>' + hdr()
-    + '<div class="pblk"><p class="pno">08</p><h4>Как распределяются твои деньги</h4>'
-    + '<p class="pd">Какая часть дохода уходит на основные расходы, на жизнь и на накопления. Риска на полосе — ориентир 50 / 30 / 20.</p>'
-    + bars
-    + '<div class="pread"><b>Сейчас на накопления и цели уходит '+(C.minimumIncome>0?pc(C.savingPercent):"—")+'. Ориентир — 20 %.</b> '
-    + stripTags(splitReadout()) + '</div></div>'
+  var concertBlk = C.concertQty > 0
+    ? blk("Концерт","Шакира, 18 октября, " + CONCERT.venue,
+        esc(C.concertSeat.n) + ' · ' + C.concertQty + ' ' + plural(C.concertQty,["билет","билета","билетов"]),
+        '<div class="cards">'
+        + '<div class="cbox"><div class="k">Билеты</div><div class="v">'+som(C.concertTickets)+'</div></div>'
+        + '<div class="cbox"><div class="k">Весь поход</div><div class="v">'+som(C.concertTotal)+'</div><div class="s">с дорогой и прочим</div></div>'
+        + '<div class="cbox"><div class="k">От месячного остатка</div><div class="v">'
+        + (C.monthlyRemaining > 0 ? pc(C.concertTotal / C.monthlyRemaining * 100) : "—") + '</div></div>'
+        + '</div>'
+        + '<div class="pread">'+stripTags(concertReadout())+'</div>')
+    : '';
 
-    + '<div class="pblk"><p class="pno">Итог</p><h4>Твоя финансовая точка А</h4>'
-    + ptable(null, [
-        ["Доход", som(C.minimumIncome) + " / месяц"],
-        ["Основные расходы", som(C.totalExpenses) + " / месяц"],
-        ["Остаётся", som(C.monthlyRemaining) + " / месяц"],
-        ["Финансовый запас", som(C.financialReserve)],
-        ["Осталось выплатить", som(C.totalDebt)],
-        ["Ближайшая цель", som(C.goalAmount)]
-      ], null)
-    + '<div class="pread" style="margin-top:14px">' + stripTags(summaryText().replace(/<\/p><p>/g," ").replace(/<\/?p>/g,"")) + '</div></div>'
+  var p6 = page(6,
+      concertBlk
+    + blk("08","Как распределяются твои деньги","Риска на полосе — ориентир 50 / 30 / 20.",
+        bars
+        + '<div class="pread"><b>Сейчас на накопления и цели уходит '+(C.minimumIncome>0?pc(C.savingPercent):"—")+'. Ориентир — 20 %.</b> '
+        + stripTags(splitReadout()) + '</div>')
+    + blk("Итог","Твоя финансовая точка А","",
+        ptable(null, [
+          ["Доход", som(C.minimumIncome) + " / месяц"],
+          ["Основные расходы", som(C.totalExpenses) + " / месяц"],
+          ["Остаётся", som(C.monthlyRemaining) + " / месяц"],
+          ["Финансовый запас", som(C.financialReserve)],
+          ["Осталось выплатить", som(C.totalDebt)],
+          ["Ближайшая цель", som(C.goalAmount)]
+        ], null))
+    + '<div class="pauth"><b>Финансовая карта</b>Инструмент финансового консультанта · Айназик Мамаева · @ainazik.mamaevaa</div>');
 
-    + '<div class="pauth"><b>Финансовая карта</b>Инструмент финансового консультанта · Айназик Мамаева · @ainazik.mamaevaa</div>'
-    + pfoot(5,PAGES) + '</div>';
+  $("sheet").innerHTML = p1 + p2 + p3 + p4 + p5 + p6;
+  fitPages();
+}
 
-  $("sheet").innerHTML = p1 + p2 + p3 + p4 + p5;
+/* Страховка от переполнения: если содержимое выше листа, чуть ужимаем его.
+   5–10 % незаметны, зато страница никогда не разваливается на два листа. */
+function fitPages(){
+  var pgs = $("sheet").querySelectorAll(".pg");
+  for(var i=0;i<pgs.length;i++){
+    var inner = pgs[i].querySelector(".pgi");
+    if(!inner) continue;
+    inner.style.transform = "";
+    inner.style.width = "";
+    /* высоту распускаем, иначе height:100% вернёт размер листа, а не содержимого */
+    inner.style.height = "auto";
+    var box = pgs[i].clientHeight;
+    var h = inner.offsetHeight;
+    inner.style.height = "";
+    if(h > box && box > 0){
+      var k = Math.max(0.72, box / h);
+      inner.style.transformOrigin = "top left";
+      inner.style.transform = "scale(" + k + ")";
+      inner.style.width = (100 / k) + "%";
+    }
+  }
 }
 
 /* ================= выгрузка =================

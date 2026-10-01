@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="У ГИК не одна программа, а несколько — с разными ставками, сроками и первым взносом. Несколько вопросов, и увидишь свою: с условиями и расчётом по конкретной квартире.">
+<meta name="author" content="Айназик Мамаева">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Какая ипотека ГИК тебе положена">
+<meta property="og:description" content="Отсекающие условия, подбор программы по категории и расчёт по квартире — взнос 50% сразу или накопительная ипотека, где своими нужно 30%.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23173F3A'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23C7A66A'/%3E%3C/svg%3E">
+<title>Ипотека ГИК — что тебе положено</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#F7F5EF; --surface:#FFFFFF; --surface-2:#F1EFE7; --surface-3:#E9E6DC;
+  --ink:#243634; --ink-2:#7A8580; --line:#DDDCD4;
+  --accent:#C7A66A; --deep:#173F3A; --on-deep:#F7F5EF;
+  --pos:#2E6F52; --neg:#A5453A; --track:#E4E2D8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111413; --surface:#191E1C; --surface-2:#212724; --surface-3:#2A312E;
+    --ink:#E9E6DC; --ink-2:#939D98; --line:#2C3330;
+    --accent:#D3B279; --deep:#20423C; --on-deep:#E8EFEB;
+    --pos:#79C29A; --neg:#E0897B; --track:#262D2A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111413; --surface:#191E1C; --surface-2:#212724; --surface-3:#2A312E;
+  --ink:#E9E6DC; --ink-2:#939D98; --line:#2C3330;
+  --accent:#D3B279; --deep:#20423C; --on-deep:#E8EFEB;
+  --pos:#79C29A; --neg:#E0897B; --track:#262D2A;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Manrope","Segoe UI",Roboto,system-ui,sans-serif;
+  font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px; margin:0 auto; padding:0 24px 90px}
+h1,h2,h3{margin:0; letter-spacing:-.02em; text-wrap:balance}
+h1{font-size:clamp(29px,5.2vw,42px); font-weight:800; line-height:1.06}
+h2{font-size:21px; font-weight:700}
+h3{font-size:17px; font-weight:700}
+p{margin:0}
+
+.brand{display:flex; justify-content:space-between; align-items:center; gap:14px; padding:24px 0 18px; flex-wrap:wrap}
+.brand__m{display:flex; align-items:center; gap:9px; font-weight:700; font-size:15px}
+.brand__d{width:9px; height:9px; border-radius:50%; background:var(--accent)}
+.brand__b{font-size:13px; color:var(--ink-2)}
+.brand__b a{color:var(--ink-2); text-decoration:none; border-bottom:1px solid var(--line)}
+.brand__b a:hover{color:var(--ink); border-bottom-color:var(--accent)}
+
+.hero{padding:14px 0 26px; max-width:44rem}
+.kicker{font-size:12.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:13px}
+.hero h1{margin-bottom:12px}
+.hero .sub{font-size:17px; color:var(--ink-2)}
+
+.card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-top:18px}
+.card__n{font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:7px}
+.card > h2{margin-bottom:4px}
+.card__d{font-size:14.5px; color:var(--ink-2); margin-bottom:18px}
+
+.q{padding:15px 0; border-bottom:1px solid var(--line)}
+.q:last-of-type{border-bottom:0; padding-bottom:4px}
+.q__t{font-size:15.5px; font-weight:600; margin-bottom:3px}
+.q__h{font-size:13px; color:var(--ink-2); margin-bottom:10px}
+.q__h a{color:var(--accent)}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface-2)}
+.seg button{
+  font:inherit; font-size:14.5px; font-weight:600; border:0; background:transparent; color:var(--ink-2);
+  padding:9px 22px; cursor:pointer;
+}
+.seg button + button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--deep); color:var(--on-deep)}
+.seg button:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+
+label.f{display:block; margin-bottom:16px}
+label.f:last-child{margin-bottom:0}
+.f__l{display:block; font-size:14.5px; font-weight:600; margin-bottom:3px}
+.f__h{display:block; font-size:13px; color:var(--ink-2); margin-bottom:8px}
+select,input{
+  width:100%; font:inherit; font-size:15.5px; color:var(--ink); background:var(--surface);
+  border:1px solid var(--line); border-radius:10px; padding:12px 13px;
+}
+select{cursor:pointer}
+input.money{text-align:right; font-variant-numeric:tabular-nums; font-weight:600}
+input:hover,select:hover{border-color:var(--ink-2)}
+input:focus,select:focus{outline:none; border-color:var(--deep); box-shadow:0 0 0 3px rgba(199,166,106,.28)}
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:0 18px}
+
+.gate{margin-top:16px; padding:18px 20px; border-radius:12px; border:1px solid var(--line); background:var(--surface-2)}
+.gate--stop{border-left:3px solid var(--neg)}
+.gate--ok{border-left:3px solid var(--pos)}
+.gate__t{font-size:17.5px; font-weight:700; margin-bottom:7px; letter-spacing:-.01em}
+.gate__d{font-size:14.5px; color:var(--ink-2); max-width:46rem}
+.gate__d + .gate__d{margin-top:7px}
+
+.prog{margin-top:16px; border:1px solid var(--line); border-radius:14px; overflow:hidden}
+.prog__h{background:var(--deep); color:var(--on-deep); padding:16px 20px}
+.prog__h .k{font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.7; margin-bottom:4px}
+.prog__h .n{font-size:21px; font-weight:800; letter-spacing:-.02em}
+.prog__b{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); background:var(--line); gap:1px}
+.prog__c{background:var(--surface); padding:14px 18px}
+.prog__c .k{font-size:12.5px; color:var(--ink-2); margin-bottom:3px}
+.prog__c .v{font-size:19px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+.prog__f{background:var(--surface-2); padding:13px 20px; font-size:13.5px; color:var(--ink-2)}
+.prog--alt .prog__h{background:var(--surface-3); color:var(--ink)}
+.prog--alt .prog__h .k{opacity:.75}
+
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-top:16px}
+.stat{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:17px 19px}
+.stat__k{font-size:13px; color:var(--ink-2); margin-bottom:5px}
+.stat__v{font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.05; letter-spacing:-.02em}
+.stat__s{font-size:12.5px; color:var(--ink-2); margin-top:4px}
+.stat--deep{background:var(--deep); border-color:var(--deep); color:var(--on-deep)}
+.stat--deep .stat__k,.stat--deep .stat__s{color:rgba(247,245,239,.7)}
+
+.ways{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-top:16px}
+.way{border:1px solid var(--line); border-radius:14px; background:var(--surface); overflow:hidden}
+.way__h{padding:15px 19px; border-bottom:1px solid var(--line); background:var(--surface-2)}
+.way__h .n{font-size:16.5px; font-weight:700}
+.way__h .s{font-size:12.5px; color:var(--ink-2); margin-top:2px}
+.way__b{padding:6px 19px 15px}
+.way__r{display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px}
+.way__r:last-child{border-bottom:0}
+.way__r span:first-child{color:var(--ink-2)}
+.way__r span:last-child{font-variant-numeric:tabular-nums; font-weight:700; text-align:right; white-space:nowrap}
+.way--best{border-color:var(--accent)}
+.way--best .way__h{background:var(--accent); color:#243634}
+.way--best .way__h .s{color:rgba(36,54,52,.72)}
+
+.pick{margin-top:14px; padding:15px 18px; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; font-size:14.5px}
+.pick .row{display:flex; justify-content:space-between; gap:14px; padding:4px 0; color:var(--ink-2)}
+.pick .row span:last-child{font-variant-numeric:tabular-nums; font-weight:600; color:var(--ink); white-space:nowrap}
+
+.verdict{margin-top:16px; padding:19px 21px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2)}
+.verdict__b{font-size:clamp(18px,3vw,23px); font-weight:700; line-height:1.28; margin-bottom:8px; letter-spacing:-.01em}
+.verdict__t{font-size:15px; color:var(--ink-2); max-width:46rem}
+.verdict__t + .verdict__t{margin-top:7px}
+.verdict b{color:var(--ink); font-weight:700}
+.bar{height:10px; border-radius:5px; background:var(--track); margin:9px 0 6px; overflow:hidden}
+.bar i{display:block; height:100%; border-radius:5px; background:var(--deep)}
+.bar i.warn{background:var(--accent)}
+.bar i.bad{background:var(--neg)}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+
+/* всё длинное и объясняющее прячется сюда — страница должна читаться за минуту */
+.fold{margin-top:14px; border:1px solid var(--line); border-radius:12px; background:var(--surface); overflow:hidden}
+.fold > summary{
+  list-style:none; cursor:pointer; padding:13px 18px; font-size:14.5px; font-weight:600;
+  display:flex; justify-content:space-between; align-items:center; gap:12px; color:var(--ink);
+}
+.fold > summary::-webkit-details-marker{display:none}
+.fold > summary::after{content:"+"; font-size:19px; color:var(--ink-2); font-weight:400; line-height:1}
+.fold[open] > summary::after{content:"–"}
+.fold > summary:hover{background:var(--surface-2)}
+.fold > summary:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+.dbody{padding:14px 18px 16px; border-top:1px solid var(--line); font-size:14px; color:var(--ink-2)}
+.dbody p + p{margin-top:9px}
+.dbody b{color:var(--ink)}
+.dbody q{font-style:italic}
+
+.chk{display:flex; gap:11px; align-items:flex-start; cursor:pointer; padding:9px 0}
+.chk input{width:19px; height:19px; flex:0 0 19px; margin:2px 0 0; accent-color:var(--deep); cursor:pointer}
+.chk span{font-size:14.5px; color:var(--ink-2)}
+.chk b{color:var(--ink); font-weight:600}
+.chk a{color:var(--accent)}
+.leadbtn{
+  margin-top:16px; width:100%; max-width:320px; font:inherit; font-size:15.5px; font-weight:700;
+  border:1px solid var(--deep); background:var(--deep); color:var(--on-deep);
+  padding:14px 22px; border-radius:10px; cursor:pointer;
+}
+.leadbtn:hover{opacity:.88}
+.leadbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.leadbtn[disabled]{opacity:.5; cursor:default}
+.status{margin-top:13px; font-size:14.5px; color:var(--ink-2); min-height:20px}
+.status.err{color:var(--neg)}
+.status.ok{color:var(--pos)}
+.locked{
+  margin-top:16px; padding:22px; border:1px dashed var(--line); border-radius:14px;
+  background:var(--surface-2); text-align:center;
+}
+.locked p{font-size:15px; color:var(--ink-2); max-width:36rem; margin:0 auto}
+.locked .t{font-size:18px; font-weight:700; color:var(--ink); margin-bottom:6px}
+.cta{margin-top:24px; padding:24px 26px; border-radius:16px; background:var(--deep); color:var(--on-deep)}
+.cta h3{margin-bottom:8px}
+.cta p{font-size:15px; opacity:.85; margin-bottom:16px; max-width:44rem}
+.cta a{
+  display:inline-block; background:var(--on-deep); color:var(--deep); text-decoration:none;
+  padding:11px 20px; border-radius:10px; font-weight:700; font-size:15px; margin-right:8px; margin-bottom:8px;
+}
+.cta a.ghost{background:transparent; color:var(--on-deep); border:1px solid rgba(247,245,239,.4)}
+.cta a:hover{opacity:.88}
+.foot{margin-top:30px; padding-top:20px; border-top:1px solid var(--line); font-size:12.5px; color:var(--ink-2); line-height:1.65}
+.foot a{color:var(--ink-2)}
+.foot b{color:var(--ink)}
+
+@media (max-width:640px){
+  .wrap{padding:0 16px 70px}
+  .card{padding:18px}
+  .seg{width:100%}
+  .seg button{flex:1; padding:10px 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- iPhone: числа не должны становиться телефонами ----------
+   Safari на iOS сам превращает длинные числовые строки в ссылки tel:
+   и красит их синим с подчёркиванием — на Android этого нет.
+   Мета-тег format-detection в артефакте не помогает: шапку страницы
+   собирает платформа, поэтому гасим уже созданные ссылки стилями. */
+a[href^="tel:"],
+a[href^="tel:"] *,
+a[x-apple-data-detectors],
+a[x-apple-data-detectors] *{
+  color:inherit !important;
+  text-decoration:none !important;
+  -webkit-text-decoration:none !important;
+  font-weight:inherit !important;
+  font-size:inherit !important;
+  pointer-events:none;
+}
+</style>
+<style>
+html{-webkit-text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="brand">
+    <span class="brand__m"><span class="brand__d"></span>Ипотека ГИК</span>
+    <span class="brand__b">Инструмент финансового консультанта · <a href="https://instagram.com/ainazik.mamaevaa" target="_blank" rel="noopener">@ainazik.mamaevaa</a></span>
+  </header>
+
+  <section class="hero">
+    <p class="kicker">2 минуты</p>
+    <h1>Какая ипотека ГИК тебе положена</h1>
+    <p class="sub">У ГИК не одна программа, а несколько — с разными ставками, сроками и первым взносом. Ответь на несколько вопросов и увидишь свою: с условиями и расчётом по конкретной квартире.</p>
+  </section>
+
+  <section class="card">
+    <p class="card__n">Шаг 1</p>
+    <h2>Проходишь ли ты в принципе</h2>
+    <p class="card__d">Три условия, которые отсекают сразу — независимо от денег.</p>
+
+    <div class="q">
+      <p class="q__t">Есть ли жильё в собственности?</p>
+      <p class="q__h">У тебя, супруга или несовершеннолетних детей. Точно видно в <b>Тундуке</b> — там всплывают доли и наследство, о которых забывают.</p>
+      <span class="seg" id="qOwn" role="group" aria-label="Есть ли жильё в собственности">
+        <button type="button" data-v="yes" aria-pressed="false">Есть</button>
+        <button type="button" data-v="no" aria-pressed="true">Нет</button>
+      </span>
+    </div>
+
+    <div class="q">
+      <p class="q__t">Были сделки с жильём за 3 года?</p>
+      <p class="q__h">Продажа, дарение, любая передача собственности — у тебя или супруга.</p>
+      <span class="seg" id="qDeals" role="group" aria-label="Сделки с жильём за 3 года">
+        <button type="button" data-v="yes" aria-pressed="false">Были</button>
+        <button type="button" data-v="no" aria-pressed="true">Не было</button>
+      </span>
+    </div>
+
+    <div class="q">
+      <p class="q__t">Стаж: 2 года общего или 1 год на текущем месте?</p>
+      <p class="q__h">Работа или бизнес. Возраст — от 18.</p>
+      <span class="seg" id="qStage" role="group" aria-label="Трудовой стаж">
+        <button type="button" data-v="yes" aria-pressed="true">Да</button>
+        <button type="button" data-v="no" aria-pressed="false">Нет</button>
+      </span>
+    </div>
+
+    <div class="gate" id="gate"></div>
+  </section>
+
+  <section class="card" id="cardProgram">
+    <p class="card__n">Шаг 2</p>
+    <h2>Где ты работаешь</h2>
+    <p class="card__d">От этого зависит ставка: 4% или 8%.</p>
+    <label class="f">
+      <span class="f__l">Категория</span>
+      <select id="selCat">
+        <option value="private">Частный сектор — работаю в компании, на себя, в бизнесе</option>
+        <option value="state">Госорганы, муниципальные организации, образование, здравоохранение, армия</option>
+        <option value="benefit">Льготная категория — 5+ детей, «Баатыр эне», инвалидность или опека, одинокий родитель, вдова или вдовец, выпускник детского дома, молодой специалист до 35 на селе</option>
+      </select>
+    </label>
+    <div class="q" style="padding-top:4px">
+      <p class="q__t">Женщина, в очереди ГИК с 2022–2024, живёшь не в Бишкеке и не в Оше?</p>
+      <p class="q__h">Все три условия сразу — тогда доступна «Ипотека для женщин».</p>
+      <span class="seg" id="qWoman" role="group" aria-label="Женская ипотека в регионах">
+        <button type="button" data-v="yes" aria-pressed="false">Да</button>
+        <button type="button" data-v="no" aria-pressed="true">Нет</button>
+      </span>
+    </div>
+    <div id="programs"></div>
+  </section>
+
+  <section class="card" id="cardLead">
+    <p class="card__n">Чтобы посчитать по твоей квартире</p>
+    <h2>Оставь контакт — пришлю разбор</h2>
+    <p class="card__d">Посмотрю твою ситуацию отдельно: в какую программу выгоднее заходить и что делать с первым взносом.</p>
+    <div class="grid2">
+      <label class="f">
+        <span class="f__l">Как тебя зовут</span>
+        <input type="text" id="leadName" placeholder="Имя" autocomplete="given-name">
+      </label>
+      <label class="f">
+        <span class="f__l">WhatsApp</span>
+        <span class="f__h">На него пришлю разбор.</span>
+        <input type="tel" id="leadPhone" inputmode="tel" placeholder="+996 555 12 34 56" autocomplete="tel">
+      </label>
+    </div>
+    <label class="chk">
+      <input type="checkbox" id="leadSub">
+      <span>Я подписан(а) на <a href="https://instagram.com/ainazik.mamaevaa" target="_blank" rel="noopener"><b>@ainazik.mamaevaa</b></a> — там разборы по деньгам и ипотеке.</span>
+    </label>
+    <label class="chk">
+      <input type="checkbox" id="leadOk">
+      <span>Согласен(на), чтобы Айназик связалась со мной по этому номеру.</span>
+    </label>
+    <button class="leadbtn" id="btnLead" type="button">Отправить и посмотреть расчёт</button>
+    <p class="status" id="leadStatus" role="status"></p>
+  </section>
+
+  <section class="card" id="cardFlat">
+    <p class="card__n">Шаг 3</p>
+    <h2>Квартира и твои деньги</h2>
+    <p class="card__d">Объекты ГИК с ценами застройщика. Взнос 50% сразу — или 30% через накопительную.</p>
+    <label class="f">
+      <span class="f__l">Жилой комплекс</span>
+      <select id="selProject"></select>
+    </label>
+    <label class="f" id="flatWrap">
+      <span class="f__l">Квартира</span>
+      <select id="selFlat"></select>
+    </label>
+    <label class="f" id="ownWrap" hidden>
+      <span class="f__l">Стоимость квартиры</span>
+      <span class="f__h">Впиши сумму, если твоего объекта нет в списке.</span>
+      <input class="money" id="ownCost" type="text" inputmode="numeric" placeholder="0" aria-label="Стоимость квартиры">
+    </label>
+    <div class="pick" id="pick"></div>
+    <div class="grid2" style="margin-top:18px">
+      <label class="f">
+        <span class="f__l">Доход в месяц</span>
+        <span class="f__h">Сколько получаешь в обычный месяц.</span>
+        <input class="money" id="income" type="text" inputmode="numeric" placeholder="0" aria-label="Доход в месяц">
+      </label>
+      <label class="f">
+        <span class="f__l">Уже накоплено</span>
+        <span class="f__h">Что есть на первый взнос сейчас.</span>
+        <input class="money" id="saved" type="text" inputmode="numeric" placeholder="0" aria-label="Уже накоплено">
+      </label>
+      <label class="f">
+        <span class="f__l">Откладываю в месяц</span>
+        <span class="f__h">Сколько получается откладывать.</span>
+        <input class="money" id="monthly" type="text" inputmode="numeric" placeholder="0" aria-label="Откладываю в месяц">
+      </label>
+    </div>
+  </section>
+
+  <section id="resultWrap">
+    <div class="ways" id="ways"></div>
+    <div class="verdict">
+      <p class="verdict__b" id="vB">Выбери квартиру</p>
+      <div class="bar"><i id="vBar" style="width:0%"></i></div>
+      <p class="verdict__t" id="vT"></p>
+      <p class="verdict__t" id="vT2"></p>
+    </div>
+    <div class="verdict">
+      <p class="verdict__b" id="lB">Нагрузка на бюджет</p>
+      <div class="bar"><i id="lBar" style="width:0%"></i></div>
+      <p class="verdict__t" id="lT">Впиши доход — покажу, какую его часть съест платёж.</p>
+    </div>
+
+    <div class="card">
+      <h2>Что с этим платежом сделает инфляция</h2>
+      <p class="card__d">Ставка фиксированная, а деньги дешевеют. В сомах платёж не меняется все 15 лет — но весит с каждым годом меньше.</p>
+      <label class="f" style="max-width:360px">
+        <span class="f__l">Сценарий инфляции</span>
+        <select id="selInfl">
+          <option value="0.05">5% в год — целевой ориентир Нацбанка</option>
+          <option value="0.08" selected>8% в год — умеренный сценарий</option>
+          <option value="0.11">11% в год — фактическая, июнь 2026</option>
+        </select>
+      </label>
+      <div class="stats" id="inflStats"></div>
+      <p class="verdict__t" id="inflT" style="margin-top:16px"></p>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h3>Дальше — очередь, документы и выбор программы</h3>
+    <p>Расчёт показывает порядок сумм, но не заменяет разговор с ГИК. Хочешь разобрать свою ситуацию — напиши.</p>
+    <a href="https://instagram.com/ainazik.mamaevaa" target="_blank" rel="noopener">Написать в директ</a>
+    <a class="ghost" href="https://portal.gik.kg/" target="_blank" rel="noopener">Подать заявку на portal.gik.kg</a>
+  </section>
+
+  <details class="fold" style="margin-top:26px">
+    <summary>Откуда цифры и что важно проверить</summary>
+    <div class="dbody">
+      <p><b>С сайта ГИК:</b> условия <a href="https://gik.kg/ru/products-detail/2/" target="_blank" rel="noopener">долевого строительства и накопительной ипотеки</a>; ставки и сроки <a href="https://gik.kg/ru/products-detail/1/" target="_blank" rel="noopener">социальной, льготной и доступной</a>; <a href="https://gik.kg/ru/products-detail/4/" target="_blank" rel="noopener">ипотека для женщин</a>. Цены и платежи по квартирам — из таблиц объектов ГИК.</p>
+      <p><b>Не с сайта ГИК:</b> предельные суммы кредита 4 и 5 млн — по публикации <a href="https://24.kg/ekonomika/311743_nakopitelnaya_ipoteka_kak_poluchit_jile_poobnovlennoy_programme_moy_dom/" target="_blank" rel="noopener">24.kg</a>. Уточняйте в ГИК.</p>
+      <p><b>Про накопительную.</b> На странице ГИК в графе «первоначальный взнос» стоит <q>В рамках продукта «Накопительная ипотека» – не более 20 % от стоимости приобретаемого жилья</q>, а в условиях — <q>30 % … вносится на депозит в банк сроком на 6 месяцев; 20 % … банковский кредит под 10% годовых на 5 лет; остальные 50% – ипотека под 8% годовых на 15 лет</q>. Как 20% соотносятся с депозитом в 30%, страница не поясняет — расчёт идёт от 30%.</p>
+      <p><b>Инфляция:</b> 5% — цель Нацбанка, 11% — фактическая годовая в июне 2026 по Нацстаткому. Это допущение, а не прогноз.</p>
+      <p>Расчёт справочный, не является предложением ГИК или банка. Условия и наличие квартир меняются. Заявка — на <a href="https://portal.gik.kg/" target="_blank" rel="noopener">portal.gik.kg</a>.</p>
+    </div>
+  </details>
+
+  <p class="foot">
+    Условия и цены — с официального сайта <a href="https://gik.kg/ru/" target="_blank" rel="noopener">gik.kg</a> и из таблиц объектов ГИК. Расчёт справочный, не является предложением ГИК или банка: условия и наличие квартир меняются.<br>
+    Инструмент финансового консультанта · Айназик Мамаева · <a href="https://instagram.com/ainazik.mamaevaa" target="_blank" rel="noopener">@ainazik.mamaevaa</a>
+  </p>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   НАСТРОЙКИ — здесь меняется всё, что нужно менять руками
+   ============================================================ */
+
+/* 1. Адрес Google Apps Script. Получается на шаге «Развернуть → Новое
+      развёртывание» и заканчивается на /exec. Пока пусто — форма работает,
+      но данные никуда не уходят: она просто скажет, что не настроена. */
+var SCRIPT_URL = "";
+
+/* 2. Как работает форма:
+      "soft" — расчёт открыт сразу, форма стоит перед ним и её можно пропустить.
+      "hard" — расчёт по квартире закрыт, пока человек не отправит контакт.
+      Подписку на Instagram проверить технически нельзя ни в одном режиме:
+      галочка — это честное слово, а не проверка. */
+var GATE_MODE = "soft";
+
+/* 3. Метка канала: берётся из адреса, например ?src=ig — чтобы в таблице
+      было видно, откуда пришёл человек. */
+var SRC = (function(){
+  try{ return new URLSearchParams(location.search).get("src") || "прямой заход"; }
+  catch(e){ return "прямой заход"; }
+})();
+
+/* ================= данные ГИК =================
+   Объекты долевого строительства: первый взнос 50%, остаток 15 лет под 8%.
+   pay — платёж из официальной таблицы ГИК. */
+var PROJECTS = [
+  {name:"ЖК «Ынтымак», 2 этап", addr:"Бишкек, ул. Байтик Баатыра", m2:124330, kind:"под ключ", ready:{y:2027,q:1}, flats:[
+    {r:1,a:"46,58–47,07",cost:5852213,down:2927000,pay:28000},
+    {r:1,a:"49–49,78",cost:6189147,down:3095000,pay:30000},
+    {r:1,a:"53,79–54,07",cost:6722523,down:3362000,pay:32200},
+    {r:1,a:"59,87–59,91",cost:7448610,down:3725000,pay:35600},
+    {r:1,a:"60,15–61,81",cost:7684837,down:3843000,pay:36800},
+    {r:2,a:"70,81–71,84",cost:8931867,down:4466000,pay:42700},
+    {r:2,a:"74,60–75,69",cost:9410538,down:4706000,pay:45000},
+    {r:2,a:"78,29–79,98",cost:9943913,down:4972000,pay:47600},
+    {r:2,a:"80,02–80,93",cost:10062027,down:5032000,pay:48100},
+    {r:2,a:"82,76–83,26",cost:10351716,down:5176000,pay:49500},
+    {r:2,a:"85,20–85,22",cost:10595403,down:5298000,pay:50700},
+    {r:3,a:"119,96–120",cost:14919600,down:7460000,pay:71300},
+    {r:3,a:"121,13–122,48",cost:15227938,down:7614000,pay:72800},
+    {r:3,a:"124,37–124,52",cost:15481572,down:7741000,pay:74000},
+    {r:3,a:"127,05",cost:15796127,down:7899000,pay:75500},
+    {r:4,a:"151,50–152,53",cost:18964055,down:9483000,pay:90700}]},
+  {name:"ЖК «Ынтымак», 1 этап", addr:"Бишкек, ул. Байтик Баатыра", m2:124330, kind:"под ключ", ready:{y:2026,q:3}, flats:[
+    {r:2,a:"84,15",cost:10462370,down:5232000,pay:50000},
+    {r:2,a:"84,71",cost:10531995,down:5266000,pay:50300},
+    {r:3,a:"121,63",cost:15122258,down:7562000,pay:72300},
+    {r:4,a:"131,74",cost:16379234,down:8190000,pay:78300}]},
+  {name:"Дом на Малдыбаева", addr:"Бишкек, ул. Малдыбаева, 261", m2:94380, kind:"ПСО", ready:{y:2026,q:2}, flats:[
+    {r:3,a:"148,11 (2 этаж)",cost:13978622,down:6990000,pay:66800}]},
+  {name:"Кызыл-Аскер", addr:"Бишкек, ул. Кустанайская — ул. Волкова", m2:87450, kind:"под ключ", ready:{y:2026,q:4}, flats:[
+    {r:2,a:"64,32",cost:5624784,down:2813000,pay:26900},
+    {r:2,a:"68,16",cost:5960592,down:2981000,pay:28500},
+    {r:2,a:"73,26",cost:6406587,down:3204000,pay:30700},
+    {r:3,a:"90,3",cost:7896735,down:3949000,pay:37800}]},
+  {name:"ЖК «Нью Сити», СК «Эсфе Билдинг»", addr:"Бишкек, ул. Аалы Токомбаева, 15/7 «А»", m2:107250, kind:"ПСО", ready:{y:2026,q:4}, flats:[
+    {r:4,a:"120,61",cost:12935423,down:6468000,pay:61900}]},
+  {name:"Дом на Айтматова", addr:"Бишкек, ул. Ч. Айтматова, 104", m2:122430, kind:"под ключ", ready:{y:2026,q:4}, flats:[
+    {r:1,a:"47,55",cost:5821547,down:2911000,pay:27900},
+    {r:1,a:"50,23",cost:6149659,down:3075000,pay:29400},
+    {r:2,a:"69,30",cost:8484399,down:4243000,pay:40600},
+    {r:3,a:"91,51",cost:11203569,down:5602000,pay:53600}]},
+  {name:"Маликова, 3 этап", addr:"Бишкек, ул. Маликова, 91", m2:96195, kind:"", ready:{y:2027,q:2}, flats:[
+    {r:2,a:"61,2–61,83",cost:5947737,down:2974000,pay:28500},
+    {r:2,a:"62–62,27",cost:5990063,down:2996000,pay:28700},
+    {r:2,a:"66,71–66,85",cost:6430636,down:3216000,pay:30800},
+    {r:3,a:"69,1–69,4",cost:6675933,down:3338000,pay:31900},
+    {r:3,a:"72,7",cost:6993377,down:3497000,pay:33500},
+    {r:3,a:"73,1–73,5",cost:7070333,down:3536000,pay:33800},
+    {r:3,a:"77,5",cost:7455113,down:3728000,pay:35700},
+    {r:3,a:"78,2",cost:7522449,down:3762000,pay:36000},
+    {r:3,a:"81,74",cost:7862979,down:3932000,pay:37600},
+    {r:3,a:"86,87",cost:8356460,down:4179000,pay:39950}]},
+  {name:"ЖК «Кочмон Сити», 24 этажа", addr:"Чуйская обл., Сокулукский р-н, с. Кунгуу", m2:96195, kind:"под ключ", ready:{y:2027,q:4}, flats:[
+    {r:1,a:"48,35",cost:4651029,down:2326000,pay:22300},
+    {r:1,a:"49,15",cost:4727984,down:2364000,pay:22600},
+    {r:1,a:"51,34",cost:4938652,down:2470000,pay:23600},
+    {r:2,a:"70,09",cost:6742308,down:3372000,pay:32250},
+    {r:2,a:"76,16",cost:7326211,down:3664000,pay:35000},
+    {r:2,a:"76,21",cost:7331021,down:3666000,pay:35050},
+    {r:2,a:"90,03",cost:8660436,down:4331000,pay:41400},
+    {r:2,a:"93,47",cost:8991347,down:4496000,pay:43000}]},
+  {name:"ЖК «Мурас Нур», СК «Нурзаман»", addr:"Бишкек, с. Орто-Сай, контур 22", m2:115830, kind:"ПСО", ready:{y:2028,q:4}, flats:[
+    {r:1,a:"55,65",cost:6445940,down:3223000,pay:30800},
+    {r:1,a:"58,07",cost:6726348,down:3364000,pay:32200},
+    {r:1,a:"58,1",cost:6729723,down:3365000,pay:32200},
+    {r:1,a:"58,45",cost:6770264,down:3386000,pay:32400},
+    {r:1,a:"58,71",cost:6800379,down:3401000,pay:32500},
+    {r:1,a:"59,47",cost:6888410,down:3445000,pay:33000},
+    {r:1,a:"67,21",cost:7784934,down:3893000,pay:37200},
+    {r:2,a:"80,67",cost:9344006,down:4673000,pay:44700},
+    {r:2,a:"80,73",cost:9350956,down:4676000,pay:44700},
+    {r:2,a:"80,79",cost:9357906,down:4679000,pay:44714},
+    {r:2,a:"81,74",cost:9467944,down:4734000,pay:45300},
+    {r:2,a:"82,3",cost:9532809,down:4767000,pay:45600},
+    {r:2,a:"82,31",cost:9533967,down:4767000,pay:45600},
+    {r:2,a:"82,42",cost:9546709,down:4774000,pay:45700},
+    {r:2,a:"83,42",cost:9662539,down:4832000,pay:46200},
+    {r:3,a:"127,2",cost:14733576,down:7367000,pay:70400},
+    {r:3,a:"127,49",cost:14767167,down:7384000,pay:70600},
+    {r:3,a:"127,9",cost:14814657,down:7408000,pay:70800}]}
+];
+
+/* именные программы ГИК. src: "gik" — официальный сайт, "smi" — публикации СМИ */
+var NAMED = {
+  benefit:{n:"Социальная ипотека", rate:4,  years:25, down:"нет", max:4000000,
+           short:"Многодетные, «Баатыр эне», инвалидность и опека, одинокие родители, вдовы, выпускники детдомов, молодые специалисты на селе."},
+  state:  {n:"Льготная ипотека",   rate:4,  years:25, down:"нет", max:4000000,
+           short:"Госорганы, муниципальные организации, образование, здравоохранение, армия."},
+  private:{n:"Доступная ипотека",  rate:8,  years:25, down:"нет", max:5000000,
+           short:"Работники частного сектора."}
+};
+/* «Ипотека для женщин» — данные с официальной страницы gik.kg/ru/products-detail/4/ */
+var WOMAN = {n:"Ипотека для женщин", rate:9.75, years:25, down:"30%", max:7000000,
+             incomeCap:120000,
+             who:"Для женщин, зарегистрированных в электронной очереди ГИК в 2022–2024 годах, во всех регионах кроме Бишкека и Оша. Совокупный доход семьи — не более 120 000 сом в месяц. Площадь квартиры до 100 м², дома до 200 м². Гарантийный фонд может дать гарантию на 20% от суммы финансирования, если своих средств не менее 10%."};
+
+var GIK_RATE = 0.08, GIK_YEARS = 15, BANK_RATE = 0.10, BANK_YEARS = 5;
+var SHARE_DOWN = 0.5, SHARE_DEPOSIT = 0.3, SHARE_BANK = 0.2;
+var INFLATION = 0.08;   /* сценарий по умолчанию, переключается пользователем */
+
+/* ================= утилиты ================= */
+function $(id){ return document.getElementById(id); }
+function fmt(n){
+  if(!isFinite(n)) return "0";
+  var neg = n < 0; n = Math.round(Math.abs(n));
+  var s = String(n), out = "";
+  while(s.length > 3){ out = " " + s.slice(-3) + out; s = s.slice(0,-3); }
+  return (neg ? "−" : "") + s + out;
+}
+function som(n){ return fmt(n) + " сом"; }
+function parseNum(v){
+  var d = String(v == null ? "" : v).replace(/[^0-9]/g,"");
+  if(!d) return 0;
+  var n = parseInt(d,10);
+  return n > 1e12 ? 1e12 : n;
+}
+function plural(n, f){
+  n = Math.abs(Math.round(n)) % 100;
+  var k = n % 10;
+  if(n > 10 && n < 20) return f[2];
+  if(k > 1 && k < 5) return f[1];
+  if(k === 1) return f[0];
+  return f[2];
+}
+function esc(s){
+  return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function annuity(principal, rate, months){
+  if(principal <= 0) return 0;
+  var i = rate / 12;
+  return principal * i / (1 - Math.pow(1 + i, -months));
+}
+var MONTH_DAT = ["январю","февралю","марту","апрелю","маю","июню","июлю","августу","сентябрю","октябрю","ноябрю","декабрю"];
+function roomsWord(r){ return r + "-комн."; }
+function monthsToReady(ready){
+  if(!ready) return null;
+  var end = new Date(ready.y, ready.q * 3 - 1, 28), now = new Date();
+  return (end.getFullYear() - now.getFullYear()) * 12 + (end.getMonth() - now.getMonth());
+}
+function readyText(r){ return r.q + " квартал " + r.y + " г."; }
+function humanMonths(m){
+  var y = Math.floor(m/12), mm = m % 12;
+  if(m > 600) return "больше 50 лет";
+  if(y === 0) return m + " " + plural(m,["месяц","месяца","месяцев"]);
+  if(mm === 0) return y + " " + plural(y,["год","года","лет"]);
+  return y + " " + plural(y,["год","года","лет"]) + " " + mm + " " + plural(mm,["месяц","месяца","месяцев"]);
+}
+
+/* ================= состояние ================= */
+var Q = {own:"no", deals:"no", stage:"yes", woman:"no"};
+var cat = "private", pi = 0, fi = 0, useOwnCost = false;
+
+function seg(id, key){
+  var host = $(id);
+  host.addEventListener("click", function(e){
+    var b = e.target.closest ? e.target.closest("button[data-v]") : null;
+    if(!b) return;
+    Q[key] = b.getAttribute("data-v");
+    [].forEach.call(host.querySelectorAll("button[data-v]"), function(x){
+      x.setAttribute("aria-pressed", String(x === b));
+    });
+    render();
+  });
+}
+seg("qOwn","own"); seg("qDeals","deals"); seg("qStage","stage"); seg("qWoman","woman");
+
+/* ================= шаг 1: отсев ================= */
+function renderGate(){
+  var g = $("gate"), stops = [];
+  if(Q.own === "yes") stops.push({t:"жильё в собственности",
+    d:"По условиям программы у участника, супруга и несовершеннолетних детей не должно быть жилья в собственности в Кыргызстане. Если доля оформлена на родственника или это наследство, которым ты не пользуешься, — проверь через Тундук, как именно она записана: иногда картина оказывается не такой, как думают."});
+  if(Q.deals === "yes") stops.push({t:"сделка с жильём за последние 3 года",
+    d:"Продажа, дарение и любая другая передача права собственности за три года до подачи заявления закрывают участие. Срок отсчитывается от даты сделки — посчитай, когда он истекает, и возвращайся к заявке после этой даты."});
+  if(Q.stage === "no") stops.push({t:"не хватает трудового стажа",
+    d:"Нужно два года общего стажа или опыта в бизнесе — либо один год на текущем месте работы. Это единственное из трёх требований, которое закрывается само собой со временем."});
+
+  /* видимость решается здесь одним местом: сначала базовые условия,
+     потом — закрыт ли расчёт до отправки контакта */
+  var ok = stops.length === 0;
+  var gated = (GATE_MODE === "hard") && !leadAlreadySent();
+  $("cardProgram").hidden = !ok;
+  $("cardLead").hidden    = !ok;
+  $("cardFlat").hidden    = !ok || gated;
+  $("resultWrap").hidden  = !ok || gated;
+
+  if(ok){
+    g.className = "gate gate--ok";
+    g.innerHTML = '<p class="gate__t">По базовым условиям проходишь</p>'
+      + '<p class="gate__d">Дальше всё решает категория и деньги. Заявка подаётся на portal.gik.kg, рассмотрение занимает два-три дня.</p>';
+    return;
+  }
+  g.className = "gate gate--stop";
+  var h = '<p class="gate__t">Сейчас участие закрыто: ' + stops.map(function(s){ return s.t; }).join(", ") + '</p>';
+  stops.forEach(function(s){ h += '<p class="gate__d">' + s.d + '</p>'; });
+  h += '<p class="gate__d">Это требования самой программы, а не банка — обойти их деньгами нельзя. Когда условие перестанет действовать, возвращайся: остальные расчёты никуда не денутся.</p>';
+  g.innerHTML = h;
+}
+
+/* ================= шаг 2: программы ================= */
+function renderPrograms(){
+  var host = $("programs");
+  if($("cardProgram").hidden){ host.innerHTML = ""; return; }
+  var p = NAMED[cat], h = "";
+
+  h += '<div class="prog"><div class="prog__h"><div class="k">Твоя программа</div><div class="n">' + esc(p.n) + '</div></div>'
+    + '<div class="prog__b">'
+    + '<div class="prog__c"><div class="k">Ставка</div><div class="v">' + p.rate + '%</div></div>'
+    + '<div class="prog__c"><div class="k">Срок</div><div class="v">до ' + p.years + ' лет</div></div>'
+    + '<div class="prog__c"><div class="k">Первый взнос</div><div class="v">' + esc(p.down) + '</div></div>'
+    + '<div class="prog__c"><div class="k">Сумма кредита</div><div class="v">до ' + (p.max/1000000) + ' млн</div></div>'
+    + '</div>'
+    + '<div class="prog__f">' + esc(p.short)
+    + ' <span style="opacity:.75">Ставка и срок — с сайта ГИК, предельная сумма — по данным СМИ.</span></div></div>';
+
+  if(Q.woman === "yes"){
+    var inc = parseNum($("income").value);
+    h += '<div class="prog prog--alt"><div class="prog__h"><div class="k">Ещё доступно</div><div class="n">' + esc(WOMAN.n) + '</div></div>'
+      + '<div class="prog__b">'
+      + '<div class="prog__c"><div class="k">Ставка</div><div class="v">' + String(WOMAN.rate).replace(".", ",") + '%</div></div>'
+      + '<div class="prog__c"><div class="k">Срок</div><div class="v">до ' + WOMAN.years + ' лет</div></div>'
+      + '<div class="prog__c"><div class="k">Первый взнос</div><div class="v">' + esc(WOMAN.down) + '</div></div>'
+      + '<div class="prog__c"><div class="k">Сумма кредита</div><div class="v">до ' + (WOMAN.max/1000000) + ' млн</div></div>'
+      + '</div><div class="prog__f">'
+      + (inc > WOMAN.incomeCap ? '<b style="color:var(--neg)">Твой доход выше 120 000 — это предел по совокупному доходу семьи.</b> ' : '')
+      + 'Регионы кроме Бишкека и Оша, очередь 2022–2024, доход семьи до 120 000.</div></div>';
+  }
+
+  host.innerHTML = h;
+}
+
+/* ================= шаг 3: квартира ================= */
+function fillProjects(){
+  var s = $("selProject"), h = "";
+  PROJECTS.forEach(function(p, i){ h += '<option value="'+i+'">' + esc(p.name) + " — " + esc(p.addr) + '</option>'; });
+  h += '<option value="own">Моего дома нет в списке — впишу сумму</option>';
+  s.innerHTML = h;
+}
+function fillFlats(){
+  var p = PROJECTS[pi], s = $("selFlat"), h = "";
+  p.flats.forEach(function(f, i){
+    h += '<option value="'+i+'">' + roomsWord(f.r) + "  " + esc(f.a) + " м²  —  " + som(f.cost) + '</option>';
+  });
+  s.innerHTML = h; s.value = "0"; fi = 0;
+}
+function current(){
+  if(useOwnCost){
+    var cost = parseNum($("ownCost").value);
+    return {cost:cost, down:Math.round(cost*SHARE_DOWN), pay:annuity(cost - Math.round(cost*SHARE_DOWN), GIK_RATE, GIK_YEARS*12), ready:null, p:null, f:null};
+  }
+  var p = PROJECTS[pi], f = p.flats[fi];
+  return {cost:f.cost, down:f.down, pay:f.pay, ready:p.ready, p:p, f:f};
+}
+
+/* ================= расчёт ================= */
+function render(){
+  renderGate();
+  renderPrograms();
+  if($("cardFlat").hidden) return;
+
+  var c = current();
+  var income = parseNum($("income").value), saved = parseNum($("saved").value), monthly = parseNum($("monthly").value);
+
+  /* карточка квартиры */
+  var pk = $("pick");
+  if(!c.cost){
+    pk.innerHTML = '<div class="row"><span>Впиши стоимость квартиры — и расчёт появится.</span><span></span></div>';
+  } else if(useOwnCost){
+    pk.innerHTML = '<div class="row"><span>Стоимость</span><span>'+som(c.cost)+'</span></div>';
+  } else {
+    var mr = monthsToReady(c.p.ready);
+    pk.innerHTML = '<div class="row"><span>'+esc(roomsWord(c.f.r))+', '+esc(c.f.a)+' м²'
+      + (c.p.kind ? ' · ' + esc(c.p.kind) : '') + '</span><span>'+som(c.cost)+'</span></div>'
+      + '<div class="row"><span>Цена за м² у застройщика</span><span>'+som(c.p.m2)+'</span></div>'
+      + '<div class="row"><span>Сдача — '+readyText(c.p.ready)+'</span><span>'
+      + (mr > 0 ? "через " + mr + " " + plural(mr,["месяц","месяца","месяцев"]) : "срок уже наступил") + '</span></div>'
+      + '<div class="row"><span>Платежи по ипотеке ГИК</span><span>после заселения</span></div>';
+  }
+
+  renderWays(c);
+  renderSaving(c, saved, monthly);
+  renderLoad(c, income);
+  renderInflation(c);
+}
+
+/* приведение к сегодняшним деньгам: сколько сегодня стоит то,
+   что будет выплачено через N месяцев при заданной инфляции */
+function realValue(sum, months, infl){
+  return sum / Math.pow(1 + infl, months / 12);
+}
+/* сегодняшняя стоимость всего потока платежей */
+function presentValue(pay, months, infl){
+  var i = Math.pow(1 + infl, 1/12) - 1;
+  if(i <= 0) return pay * months;
+  return pay * (1 - Math.pow(1 + i, -months)) / i;
+}
+function renderInflation(c){
+  var host = $("inflStats"), t = $("inflT");
+  if(!c.cost){ host.innerHTML = ""; t.textContent = ""; return; }
+  var w = ways(c), n = GIK_YEARS * 12;
+  var nominal = w.gikPay * n;
+  var pv = presentValue(w.gikPay, n, INFLATION);
+  var last = realValue(w.gikPay, n, INFLATION);
+  var mid  = realValue(w.gikPay, 60, INFLATION);
+
+  host.innerHTML =
+      '<div class="stat"><div class="stat__k">Платёж сегодня</div><div class="stat__v">'+som(w.gikPay)+'</div><div class="stat__s">в сомах он не изменится</div></div>'
+    + '<div class="stat"><div class="stat__k">Он же через 5 лет</div><div class="stat__v">'+som(mid)+'</div><div class="stat__s">в сегодняшних деньгах</div></div>'
+    + '<div class="stat stat--deep"><div class="stat__k">Он же на 15-м году</div><div class="stat__v">'+som(last)+'</div><div class="stat__s">в сегодняшних деньгах</div></div>';
+
+  var diff = nominal - pv;
+  var pct = Math.round(INFLATION * 100);
+  var txt = "При инфляции <b>" + pct + "% в год</b> ты отдашь в сомах <b>" + som(nominal)
+    + "</b>, но по покупательной способности это <b>" + som(pv) + "</b> — на " + som(nominal - pv) + " меньше. ";
+  if(pv < w.gikLoan){
+    txt += "Это меньше самой суммы кредита (" + som(w.gikLoan) + "): фиксированные 8% годовых обесцениваются быстрее, чем набегают проценты. ";
+  } else {
+    txt += "При кредите " + som(w.gikLoan) + " реальная переплата выходит около " + som(pv - w.gikLoan)
+        + " вместо номинальных " + som(nominal - w.gikLoan) + ". ";
+  }
+  txt += "Отсюда и тяжесть первых лет: платёж пока «полновесный», а доходы обычно растут вместе с ценами. Это допущение для расчёта, а не прогноз.";
+  t.innerHTML = txt;
+}
+
+function ways(c){
+  var gikLoan = Math.max(0, c.cost - c.down);
+  var deposit = Math.round(c.cost * SHARE_DEPOSIT);
+  var bankLoan = Math.round(c.cost * SHARE_BANK);
+  var bankPay = annuity(bankLoan, BANK_RATE, BANK_YEARS*12);
+  return {
+    gikLoan:gikLoan, gikPay:c.pay,
+    deposit:deposit, bankLoan:bankLoan, bankPay:bankPay,
+    first5:c.pay + bankPay
+  };
+}
+
+function renderWays(c){
+  var host = $("ways");
+  if(!c.cost){ host.innerHTML = ""; return; }
+  var w = ways(c);
+  host.innerHTML =
+      '<div class="way"><div class="way__h"><div class="n">Взнос 50% сразу</div>'
+    + '<div class="s">Долевое строительство, как в таблицах ГИК</div></div>'
+    + '<div class="way__b">'
+    + '<div class="way__r"><span>Нужно своими деньгами</span><span>'+som(c.down)+'</span></div>'
+    + '<div class="way__r"><span>Кредит ГИК, 8% на 15 лет</span><span>'+som(w.gikLoan)+'</span></div>'
+    + '<div class="way__r"><span>Платёж в месяц</span><span>'+som(w.gikPay)+'</span></div>'
+    + '<div class="way__r"><span>Переплата за 15 лет</span><span>'+som(w.gikPay*180 - w.gikLoan)+'</span></div>'
+    + '</div></div>'
+
+    + '<div class="way way--best"><div class="way__h"><div class="n">Накопительная ипотека</div>'
+    + '<div class="s">Своими нужно 30%, ещё 20% даёт банк</div></div>'
+    + '<div class="way__b">'
+    + '<div class="way__r"><span>Своими на депозит, 6 месяцев</span><span>'+som(w.deposit)+'</span></div>'
+    + '<div class="way__r"><span>Кредит банка, 10% на 5 лет</span><span>'+som(w.bankLoan)+'</span></div>'
+    + '<div class="way__r"><span>Платёж первые 5 лет</span><span>'+som(w.first5)+'</span></div>'
+    + '<div class="way__r"><span>Платёж после 5 лет</span><span>'+som(w.gikPay)+'</span></div>'
+    + '</div></div>';
+}
+
+function renderSaving(c, saved, monthly){
+  var b = $("vB"), t = $("vT"), t2 = $("vT2"), bar = $("vBar");
+  if(!c.cost){
+    b.textContent = "Выбери квартиру"; t.textContent = ""; t2.textContent = "";
+    bar.style.width = "0%"; bar.className = ""; return;
+  }
+  var w = ways(c), need = w.deposit;   /* вход по накопительной — 30% */
+  var pct = need > 0 ? Math.min(100, saved / need * 100) : 0;
+  bar.style.width = pct + "%";
+  bar.className = pct >= 100 ? "" : (pct >= 50 ? "warn" : "bad");
+
+  if(saved >= need){
+    b.innerHTML = "Вход по накопительной уже собран — <b class='pos'>" + som(saved) + "</b> при нужных " + som(need);
+    b.className = "verdict__b";
+    t.innerHTML = "Для накопительной ипотеки нужно <b>" + som(need) + "</b> — это 30% стоимости, они полгода лежат на депозите. У тебя эта сумма есть."
+      + (saved >= c.down ? " Более того, ты закрываешь и полные 50% — можно идти напрямую, без банковского кредита и без лишних 10% годовых." : "");
+    t2.innerHTML = "Для пути «50% сразу» понадобилось бы " + som(c.down) + " — на " + som(c.down - need) + " больше.";
+    return;
+  }
+
+  var gap = need - saved;
+  b.innerHTML = "До входа не хватает <b>" + som(gap) + "</b>";
+  b.className = "verdict__b";
+  t.innerHTML = "Считаю по накопительной ипотеке: своими нужно <b>" + som(need) + "</b> — это 30% стоимости и на "
+    + som(c.down - need) + " меньше, чем при взносе 50% сразу. Накоплено " + som(saved)
+    + ", то есть " + Math.round(pct) + "% от входа.";
+
+  if(monthly <= 0){
+    t2.innerHTML = "Впиши, сколько получается откладывать в месяц, — посчитаю срок.";
+    return;
+  }
+  /* Взнос вносится сразу, при входе в программу, — а не к сроку сдачи дома.
+     Поэтому считаем просто: когда сумма будет собрана. Дату сдачи показываем
+     справочно, потому что платежи по ипотеке ГИК начинаются после заселения. */
+  var m = Math.ceil(gap / monthly);
+  var d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + m);
+  var line = "При " + som(monthly) + " в месяц эта сумма соберётся за <b>" + humanMonths(m) + "</b>"
+    + (m <= 600 ? " — к " + MONTH_DAT[d.getMonth()] + " " + d.getFullYear() + " года." : ".")
+    + " Взнос вносится сразу, при входе в программу, — значит войти получится не раньше этого срока.";
+  t2.innerHTML = line;
+}
+
+function renderLoad(c, income){
+  var b = $("lB"), t = $("lT"), bar = $("lBar");
+  if(!c.cost || income <= 0){
+    b.textContent = "Нагрузка на бюджет"; b.className = "verdict__b";
+    t.textContent = "Впиши доход — покажу, какую его часть съест платёж.";
+    bar.style.width = "0%"; bar.className = ""; return;
+  }
+  var w = ways(c), share = w.first5 / income * 100;
+  bar.style.width = Math.min(100, share) + "%";
+  bar.className = share > 50 ? "bad" : (share > 30 ? "warn" : "");
+  b.innerHTML = "Первые 5 лет платёж съест <b>" + Math.round(share) + "%</b> дохода";
+  b.className = "verdict__b";
+
+  var txt = "Первые 5 лет идут два платежа сразу: " + som(w.bankPay) + " банку и " + som(w.gikPay)
+    + " в ГИК — вместе <b>" + som(w.first5) + "</b> из " + som(income) + ". Когда банковский кредит закроется, останется "
+    + som(w.gikPay) + " — это " + Math.round(w.gikPay / income * 100) + "% дохода. ";
+  if(share > 100)     txt += "Пока платёж больше дохода целиком.";
+  else if(share > 50) txt += "Больше половины дохода на жильё — такую нагрузку считают предельной.";
+  else if(share > 30) txt += "Это выше комфортного ориентира в 30%, но только в первые пять лет — дальше нагрузка падает.";
+  else                txt += "Даже в самые тяжёлые пять лет укладывается в ориентир до 30% дохода.";
+  t.innerHTML = txt;
+}
+
+/* ================= события ================= */
+$("selCat").addEventListener("change", function(){ cat = this.value; render(); });
+$("selInfl").addEventListener("change", function(){ INFLATION = parseFloat(this.value); render(); });
+$("selProject").addEventListener("change", function(){
+  var v = this.value;
+  useOwnCost = (v === "own");
+  $("flatWrap").hidden = useOwnCost;
+  $("ownWrap").hidden = !useOwnCost;
+  if(!useOwnCost){ pi = +v; fillFlats(); }
+  render();
+});
+$("selFlat").addEventListener("change", function(){ fi = +this.value; render(); });
+["ownCost","income","saved","monthly"].forEach(function(id){
+  var el = $(id);
+  el.addEventListener("input", render);
+  el.addEventListener("focus", function(){ var v = parseNum(el.value); el.value = v ? String(v) : ""; if(el.select) el.select(); });
+  el.addEventListener("blur",  function(){ var v = parseNum(el.value); el.value = v ? fmt(v) : ""; });
+});
+
+/* ================= сбор контактов ================= */
+var LEAD_KEY = "ipoteka_lead_sent";
+/* флаг держим и в памяти: localStorage недоступен в приватном режиме и
+   при заблокированном хранилище, а замок должен открываться в любом случае */
+var leadSent = false;
+function leadAlreadySent(){
+  if(leadSent) return true;
+  try{ return localStorage.getItem(LEAD_KEY) === "1"; }catch(e){ return false; }
+}
+function markLeadSent(){
+  leadSent = true;
+  try{ localStorage.setItem(LEAD_KEY, "1"); }catch(e){}
+}
+function setLead(msg, cls){
+  var el = $("leadStatus");
+  el.textContent = msg || "";
+  el.className = "status" + (cls ? " " + cls : "");
+}
+/* цифры телефона: в Кыргызстане номер без кода — 9 знаков */
+function phoneDigits(v){ return String(v || "").replace(/[^0-9]/g, ""); }
+
+/* после отправки контакта просто пересобираем экран: видимость
+   считается в renderGate, там же учитывается уже отправленный контакт */
+function unlock(){
+  render();
+  var el = $("cardFlat");
+  if(el && !el.hidden) el.scrollIntoView({block:"start", behavior:"smooth"});
+}
+
+/* всё, что калькулятор уже знает о человеке — уходит в таблицу вместе с контактом */
+function leadPayload(){
+  var c = current(), w = c.cost ? ways(c) : null;
+  var saved = parseNum($("saved").value);
+  var need = w ? w.deposit : 0;
+  return {
+    name:   $("leadName").value.trim(),
+    phone:  $("leadPhone").value.trim(),
+    subscribed: $("leadSub").checked ? "да" : "нет",
+    src:    SRC,
+    program: NAMED[cat].n + (Q.woman === "yes" ? " + ипотека для женщин" : ""),
+    category: $("selCat").selectedOptions[0].textContent.split("—")[0].trim(),
+    project: useOwnCost ? "своя сумма" : PROJECTS[pi].name,
+    flat:    useOwnCost ? "" : (roomsWord(PROJECTS[pi].flats[fi].r) + " " + PROJECTS[pi].flats[fi].a + " м²"),
+    cost:    c.cost,
+    income:  parseNum($("income").value),
+    saved:   saved,
+    monthly: parseNum($("monthly").value),
+    need30:  need,
+    gap:     Math.max(0, need - saved),
+    payFirst5: w ? Math.round(w.first5) : 0,
+    payAfter:  w ? Math.round(w.gikPay) : 0,
+    page: "Ипотека ГИК"
+  };
+}
+
+$("btnLead").addEventListener("click", function(){
+  var btn = this;
+  var name = $("leadName").value.trim();
+  var digits = phoneDigits($("leadPhone").value);
+
+  if(name.length < 2){ setLead("Впиши имя — так я пойму, к кому обращаюсь.", "err"); $("leadName").focus(); return; }
+  if(digits.length < 9){ setLead("Проверь номер: похоже, не хватает цифр.", "err"); $("leadPhone").focus(); return; }
+  if(!$("leadOk").checked){ setLead("Нужно согласие на связь — без него я не смогу написать.", "err"); return; }
+
+  if(!SCRIPT_URL){
+    setLead("Форма ещё не подключена к таблице. Расчёт открыт — им можно пользоваться.", "err");
+    markLeadSent(); unlock();
+    return;
+  }
+
+  btn.disabled = true;
+  setLead("Отправляю…");
+  /* text/plain — чтобы браузер не слал предварительный запрос, который
+     Apps Script не умеет обрабатывать. Ответ прочитать нельзя: это чужой
+     домен, поэтому отправляем «вслепую» — так устроена безопасность браузера. */
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {"Content-Type": "text/plain;charset=utf-8"},
+    body: JSON.stringify(leadPayload())
+  }).then(function(){
+    markLeadSent(); unlock(); btn.disabled = true;
+    btn.textContent = "Отправлено";
+    setLead("Готово. Расчёт ниже — а разбор я пришлю в WhatsApp.", "ok");
+  }).catch(function(){
+    markLeadSent(); unlock(); btn.disabled = false;
+    setLead("Связь оборвалась, но расчёт открыт. Если не напишу в течение дня — стукни в директ.", "err");
+  });
+});
+
+if(leadAlreadySent()){
+  $("btnLead").disabled = true;
+  $("btnLead").textContent = "Контакт уже отправлен";
+  setLead("Ты уже оставлял(а) контакт с этого устройства.", "ok");
+}
+
+/* ================= старт ================= */
+fillProjects();
+(function preselectCheapest(){
+  var bi = 0, bc = Infinity;
+  PROJECTS.forEach(function(p, i){ p.flats.forEach(function(f){ if(f.cost < bc){ bc = f.cost; bi = i; } }); });
+  pi = bi; $("selProject").value = String(bi);
+})();
+fillFlats();
+$("income").value  = fmt(90000);
+$("saved").value   = fmt(1500000);
+$("monthly").value = fmt(40000);
+
+/* в мягком режиме форма стоит после расчёта: человек сначала видит пользу */
+if(GATE_MODE !== "hard"){
+  $("resultWrap").insertAdjacentElement("afterend", $("cardLead"));
+  $("cardLead").querySelector(".card__n").textContent = "Последний шаг";
+  $("cardLead").querySelector("h2").textContent = "Забрать разбор своей ситуации";
+  $("btnLead").textContent = "Отправить";
+}
+
+render();
+})();
+</script>
+</body>
+</html>

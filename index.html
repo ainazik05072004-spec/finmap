@@ -6,7 +6,6 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Financial map in 7 steps">
-<meta name="author" content="Ainazik Mamaeva">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:title" content="Finansovaya karta">
@@ -407,6 +406,28 @@ a[x-apple-data-detectors] *{
   font-size:inherit !important;
   pointer-events:none;
 }
+
+/* ---------- форма сбора контактов ---------- */
+.lead{margin-top:44px; padding:28px 30px; border:1px solid var(--line); border-radius:18px; background:var(--surface)}
+.lead h3{margin-bottom:6px}
+.lead__d{font-size:14.5px; color:var(--ink-2); margin-bottom:20px; max-width:44rem}
+.lead__grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:0 18px}
+.chk{display:flex; gap:11px; align-items:flex-start; cursor:pointer; padding:9px 0}
+.chk input{width:19px; height:19px; flex:0 0 19px; margin:2px 0 0; accent-color:var(--accent); cursor:pointer}
+.chk span{font-size:14.5px; color:var(--ink-2)}
+.chk b{color:var(--ink); font-weight:600}
+.chk a{color:var(--accent)}
+.leadbtn{
+  margin-top:16px; width:100%; max-width:320px; font:inherit; font-size:15.5px; font-weight:700;
+  border:1px solid var(--deep); background:var(--deep); color:var(--on-deep);
+  padding:14px 22px; border-radius:10px; cursor:pointer;
+}
+.leadbtn:hover{opacity:.88}
+.leadbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.leadbtn[disabled]{opacity:.5; cursor:default}
+.leadstatus{margin-top:13px; font-size:14.5px; color:var(--ink-2); min-height:20px}
+.leadstatus.err{color:var(--neg)}
+.leadstatus.ok{color:var(--pos)}
 </style>
 <style>
 html{-webkit-text-size-adjust:100%}
@@ -467,6 +488,137 @@ img{max-width:100%}
 
 /* ================= данные ================= */
 var KEY = "finmap_v3";
+
+/* ============================================================
+   СБОР КОНТАКТОВ — единственное, что меняется руками
+   ============================================================
+   Адрес Google Apps Script. Берётся при развёртывании веб-приложения
+   и заканчивается на /exec. Один и тот же для всех трёх инструментов:
+   скрипт сам разложит заявки по листам. Пока пусто — форма честно
+   скажет, что не подключена, и ничего не потеряет. */
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMYpX_oDFgngsyjZQhBiLKjwqlTbbZQDwoQk9ahKyQd5iVJfjl9HlgS1uBAOx_7CwtaQ/exec";
+
+/* Как эта страница подписывается в таблице */
+var PAGE_NAME = "Карта";
+
+/* Метка канала из адреса: ?src=ig, ?src=reels и так далее */
+var SRC = (function(){
+  try{ return new URLSearchParams(location.search).get("src") || "прямой заход"; }
+  catch(e){ return "прямой заход"; }
+})();
+
+var LEAD_KEY = "lead_sent_" + PAGE_NAME;
+/* флаг держим и в памяти: localStorage недоступен в приватном режиме */
+var leadSent = false;
+function leadAlreadySent(){
+  if(leadSent) return true;
+  try{ return localStorage.getItem(LEAD_KEY) === "1"; }catch(e){ return false; }
+}
+function markLeadSent(){
+  leadSent = true;
+  try{ localStorage.setItem(LEAD_KEY, "1"); }catch(e){}
+}
+function setLead(msg, cls){
+  var el = $("leadStatus");
+  if(!el) return;
+  el.textContent = msg || "";
+  el.className = "leadstatus" + (cls ? " " + cls : "");
+}
+function phoneDigits(v){ return String(v || "").replace(/[^0-9]/g, ""); }
+
+/* вместе с контактом уходит вся картина расчёта — чтобы в таблице
+   было видно, кому писать первым, а не просто список телефонов */
+function leadPayload(){
+  var p = {
+    page: PAGE_NAME,
+    name: $("leadName").value.trim(),
+    phone: $("leadPhone").value.trim(),
+    subscribed: $("leadSub").checked ? "да" : "нет",
+    src: SRC,
+    income: C.minimumIncome,
+    expenses: C.totalExpenses,
+    remaining: C.monthlyRemaining,
+    reserve: C.financialReserve,
+    reserveDays: C.reserveDays === null ? "" : C.reserveDays,
+    debt: C.totalDebt,
+    goal: C.goalAmount,
+    goalName: S.goalName || "",
+    goalDate: goalDateText(),
+    savingPercent: Math.round((C.savingPercent || 0) * 10) / 10
+  };
+  if(typeof CONCERT !== "undefined" && CONCERT && C.concertQty > 0){
+    p.seat = C.concertSeat.n;
+    p.qty = C.concertQty;
+    p.concertTotal = C.concertTotal;
+  }
+  return p;
+}
+
+function leadSection(){
+  return '<section class="lead" id="cardLead">'
+    + '<h3>Забрать разбор своей ситуации</h3>'
+    + '<p class="lead__d">Расчёт уже перед тобой. Если хочешь, посмотрю твою карту отдельно и напишу, что с ней делать дальше.</p>'
+    + '<div class="lead__grid">'
+    + '<div class="field"><div class="field__lbl">Как тебя зовут</div>'
+    + '<input type="text" id="leadName" placeholder="Имя" autocomplete="given-name"></div>'
+    + '<div class="field"><div class="field__lbl">WhatsApp</div>'
+    + '<div class="field__hint">На него пришлю разбор.</div>'
+    + '<input type="tel" id="leadPhone" inputmode="tel" placeholder="+996 555 12 34 56" autocomplete="tel"></div>'
+    + '</div>'
+    + '<label class="chk"><input type="checkbox" id="leadSub">'
+    + '<span>Я подписан(а) на <a href="https://instagram.com/ainazik.mamaevaa" target="_blank" rel="noopener"><b>@ainazik.mamaevaa</b></a> — там разборы по деньгам.</span></label>'
+    + '<label class="chk"><input type="checkbox" id="leadOk">'
+    + '<span>Согласен(на), чтобы Айназик связалась со мной по этому номеру.</span></label>'
+    + '<button class="leadbtn" id="btnLead" type="button">Отправить</button>'
+    + '<p class="leadstatus" id="leadStatus" role="status"></p>'
+    + '</section>';
+}
+
+function bindLead(){
+  var btn = $("btnLead");
+  if(!btn) return;
+
+  if(leadAlreadySent()){
+    btn.disabled = true;
+    btn.textContent = "Контакт уже отправлен";
+    setLead("Ты уже оставлял(а) контакт с этого устройства.", "ok");
+    return;
+  }
+
+  btn.addEventListener("click", function(){
+    var name = $("leadName").value.trim();
+    var digits = phoneDigits($("leadPhone").value);
+
+    if(name.length < 2){ setLead("Впиши имя — так я пойму, к кому обращаюсь.", "err"); $("leadName").focus(); return; }
+    if(digits.length < 9){ setLead("Проверь номер: похоже, не хватает цифр.", "err"); $("leadPhone").focus(); return; }
+    if(!$("leadOk").checked){ setLead("Нужно согласие на связь — без него я не смогу написать.", "err"); return; }
+
+    if(!SCRIPT_URL){
+      setLead("Форма ещё не подключена к таблице. Карта работает, расчёт никуда не денется.", "err");
+      return;
+    }
+
+    btn.disabled = true;
+    setLead("Отправляю…");
+    /* text/plain — чтобы браузер не слал предварительный запрос, который
+       Apps Script не умеет обрабатывать. Ответ прочитать нельзя: чужой
+       домен, поэтому отправляем «вслепую» — так устроена безопасность. */
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      body: JSON.stringify(leadPayload())
+    }).then(function(){
+      markLeadSent();
+      btn.textContent = "Отправлено";
+      setLead("Готово. Напишу тебе в WhatsApp.", "ok");
+    }).catch(function(){
+      markLeadSent();
+      btn.disabled = false;
+      setLead("Связь оборвалась. Если не напишу в течение дня — стукни в директ.", "err");
+    });
+  });
+}
 
 var MANDATORY_BASE = [
   {n:"Кредиты и рассрочки"}, {n:"Аренда жилья"}, {n:"Коммунальные услуги"},
@@ -1116,6 +1268,8 @@ function renderResult(){
     +  '<div class="summary"><h3>Что сейчас получается</h3>' + summaryText() + '</div></section>';
 
   /* --- действия --- */
+  h += leadSection();
+
   h += '<section class="actions"><h3>Забрать карту себе</h3>'
     +  '<p>' + (EMBEDDED
         ? 'Карта собирается в документ на пять страниц. Внутри Claude страница не может отдать файл — поэтому страницы выводятся сюда картинками: их сохраняют долгим нажатием на телефоне и правым кликом на компьютере. Для Excel карта копируется в буфер.'
@@ -1168,6 +1322,7 @@ function summaryText(){
 }
 
 function bindResultButtons(){
+  bindLead();
   $("btnEdit").addEventListener("click", function(){ goStep(1); });
   if($("btnPdf"))  $("btnPdf").addEventListener("click", onPdf);
   if($("btnSave")) $("btnSave").addEventListener("click", onSaveImages);

@@ -434,6 +434,8 @@ a[x-apple-data-detectors] *{
 .leadbtn:hover{opacity:.88}
 .leadbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 .leadbtn[disabled]{opacity:.5; cursor:default}
+/* та же кнопка, но ссылкой — ведёт в Telegram */
+a.leadbtn{display:block; text-align:center; text-decoration:none}
 .leadstatus{margin-top:13px; font-size:14.5px; color:var(--ink-2); min-height:20px}
 .leadstatus.err{color:var(--neg)}
 .leadstatus.ok{color:var(--pos)}
@@ -509,6 +511,82 @@ var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMYpX_oDFgngsyjZQhBiL
 
 /* Как эта страница подписывается в таблице */
 var PAGE_NAME = "Карта";
+
+/* Бот @ainazik_mamaeva_bot. Страница обращается к нему напрямую, минуя
+   Apps Script: иначе скрипту понадобилось бы право ходить во внешнюю
+   сеть и повторная авторизация Google. CORS на той стороне открыт
+   только для ainazik05072004-spec.github.io — с локального адреса и из
+   артефакта вызов не пройдёт, так и задумано. */
+var BOT_URL = "https://ainazik.marmafin.xyz/api/lead";
+var BOT_START = "https://t.me/ainazik_mamaeva_bot?start=";
+var BOT_SOURCE = "karta";
+
+/* Телеграм запрещает боту писать первым: пока человек не нажал
+   «Начать», бот его не знает и не имеет права к нему обращаться.
+   Поэтому выжимка уходит боту заранее, под случайным кодом, а кнопка
+   ведёт на этот код. Человек жмёт «Начать» — бот узнаёт его, отдаёт
+   выжимку и показывает кнопку написать Айназик. */
+function newCode(){
+  var abc = "abcdefghijklmnopqrstuvwxyz0123456789", s = "", i;
+  try{
+    var b = new Uint8Array(16);
+    crypto.getRandomValues(b);
+    for(i = 0; i < 16; i++) s += abc[b[i] % abc.length];
+  }catch(e){
+    for(i = 0; i < 16; i++) s += abc[Math.floor(Math.random() * abc.length)];
+  }
+  return s;
+}
+var botCode = newCode();
+
+/* Документ на пять страниц в сообщение не влезет — шлём выжимку.
+   Её хватает, чтобы понять, с кем говоришь; сам документ человек
+   забирает на странице. */
+function botSummary(p){
+  var rows = [
+    ["Доход", som(p.income)],
+    ["Расходы", som(p.expenses)],
+    ["Остаток", som(p.remaining)],
+    ["Запас", p.reserve ? som(p.reserve) + (p.reserveDays !== "" ? ", хватит на " + p.reserveDays + " дн." : "") : ""],
+    ["Осталось выплатить", p.debt ? som(p.debt) : ""],
+    ["Цель", p.goal ? som(p.goal) + (p.goalName ? " — " + p.goalName : "") : ""],
+    ["Срок цели", p.goalDate],
+    /* запятая, а не точка: десятичный разделитель в русском тексте */
+    ["Откладывает", p.savingPercent ? String(p.savingPercent).replace(".", ",") + "% дохода" : ""]
+  ];
+  if(p.concertTotal){
+    rows.push(["", ""]);
+    rows.push(["Концерт", p.seat + ", " + p.qty + " шт. — " + som(p.concertTotal)]);
+  }
+  rows.push(["", ""]);
+  rows.push(["Источник", p.src]);
+  return rows.filter(function(x){ return x[0] === "" || x[1]; })
+    .map(function(x){ return x[0] ? x[0] + ": " + x[1] : ""; })
+    .join("\n").replace(/\n{3,}/g, "\n\n").slice(0, 2500);
+}
+
+/* notify=false — положить молча, чтобы разбор ждал человека в боте.
+   notify=true — форма заполнена, контакт есть, Айназик нужно узнать
+   о заявке сразу, не дожидаясь, нажмёт человек «Начать» или нет. */
+var botSent = false;
+function sendToBot(p, notify){
+  botSent = true;
+  var body = {
+    source: BOT_SOURCE,
+    code: botCode,
+    notify: !!notify,
+    summary: botSummary(p)
+  };
+  if(notify){ body.name = p.name; body.contact = p.phone; }
+  try{
+    fetch(BOT_URL, {
+      method: "POST",
+      keepalive: true,
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(body)
+    }).catch(function(){});
+  }catch(e){}
+}
 
 /* Метка канала из адреса: ?src=ig, ?src=reels и так далее */
 var SRC = (function(){
@@ -609,6 +687,10 @@ function bindLead(){
 
     btn.disabled = true;
     setLead("Отправляю…");
+
+    var payload = leadPayload();
+    sendToBot(payload, true);   // Айназик увидит заявку в Telegram сразу
+
     /* text/plain — чтобы браузер не слал предварительный запрос, который
        Apps Script не умеет обрабатывать. Ответ прочитать нельзя: чужой
        домен, поэтому отправляем «вслепую» — так устроена безопасность. */
@@ -616,7 +698,7 @@ function bindLead(){
       method: "POST",
       mode: "no-cors",
       headers: {"Content-Type": "text/plain;charset=utf-8"},
-      body: JSON.stringify(leadPayload())
+      body: JSON.stringify(payload)
     }).then(function(){
       markLeadSent();
       btn.textContent = "Отправлено";
@@ -1279,16 +1361,24 @@ function renderResult(){
   /* --- действия --- */
   h += leadSection();
 
+  h += '<section class="lead"><h3>Или забери карту в Telegram</h3>'
+    +  '<p class="lead__d">Бот пришлёт выжимку по этой карте тебе в переписку — чтобы цифры не потерялись вместе с вкладкой. '
+    +  'Там же будет кнопка написать мне.</p>'
+    +  '<a class="leadbtn" id="btnBot" href="' + BOT_START + botCode + '" target="_blank" rel="noopener">Открыть в Telegram</a>'
+    +  '</section>';
+
   h += '<section class="actions"><h3>Забрать карту себе</h3>'
-    +  '<p>' + (EMBEDDED
-        ? 'Карта собирается в документ на пять страниц. Внутри Claude страница не может отдать файл — поэтому страницы выводятся сюда картинками: их сохраняют долгим нажатием на телефоне и правым кликом на компьютере. Для Excel карта копируется в буфер.'
-        : 'PDF — отдельный документ на пять страниц со всеми цифрами и выводами. Файл для Excel — с живыми формулами: меняешь суммы прямо в таблице, итоги пересчитываются сами.')
-    +  '</p>'
+    +  '<p>Карта собирается в документ на пять страниц. <b>Сохранить картинками</b> — работает везде, '
+    +  'в том числе если ты открыла ссылку внутри Instagram или Telegram: страницы появятся ниже, '
+    +  'сохрани их долгим нажатием. <b>Печать в PDF</b> удобнее на компьютере.</p>'
+    +  (inAppBrowser() ? '<div class="howto" style="margin-top:0; margin-bottom:16px">'
+        + '<b>Ты открыла страницу внутри приложения.</b> Здесь браузер не разрешает ни печать, ни скачивание файлов — '
+        + 'кнопки просто не сработают. Нажимай «Сохранить картинками», это работает везде. '
+        + 'Либо открой ссылку в обычном браузере: в правом верхнем углу «…» → «Открыть в Safari» или «Открыть в Chrome».</div>' : '')
     +  '<div class="actions__row">'
-    +  (EMBEDDED
-        ? '<button class="btn" id="btnSave">Собрать карту для сохранения</button>'
-        : '<button class="btn" id="btnPdf">Сохранить в PDF</button>')
-    +  '<button class="btn btn--ghost" id="btnXls">' + (EMBEDDED ? 'Скопировать для Excel' : 'Скачать для Excel') + '</button>'
+    +  '<button class="btn" id="btnSave">Сохранить картинками</button>'
+    +  '<button class="btn btn--ghost" id="btnPdf">Печать в PDF</button>'
+    +  '<button class="btn btn--ghost" id="btnXls">Скопировать для Excel</button>'
     +  '<button class="btn btn--ghost" id="btnEdit">Изменить данные</button>'
     +  '</div><p class="status" id="status" role="status"></p>'
     +  '<div id="copyFallback" hidden><p class="status">Скопируй текст ниже целиком и вставь в пустой лист Excel.</p>'
@@ -1332,6 +1422,11 @@ function summaryText(){
 
 function bindResultButtons(){
   bindLead();
+  if($("btnBot")) $("btnBot").addEventListener("click", function(){
+    /* если форма уже отправлена, второй раз не шлём: там был контакт,
+       а здесь его нет, и заявка без контакта затёрла бы заявку с ним */
+    if(!botSent) sendToBot(leadPayload(), false);
+  });
   $("btnEdit").addEventListener("click", function(){ goStep(1); });
   if($("btnPdf"))  $("btnPdf").addEventListener("click", onPdf);
   if($("btnSave")) $("btnSave").addEventListener("click", onSaveImages);
@@ -1519,6 +1614,17 @@ function buildSheet(){
    На обычном хостинге (файл открыт как страница, не в рамке) работает
    и печать в PDF, и скачивание файла — там показываем эти кнопки. */
 var EMBEDDED = (function(){ try{ return window.self !== window.top; }catch(e){ return true; } })();
+
+/* Встроенные браузеры Instagram, Facebook и Telegram не умеют ни печать,
+   ни скачивание файлов: кнопка нажимается и ничего не происходит.
+   Определяем их, чтобы подсказать человеку, а сохранение картинками
+   работает везде и без всякого определения. */
+function inAppBrowser(){
+  try{
+    var ua = navigator.userAgent || "";
+    return /Instagram|FBAN|FBAV|FB_IAB|Line\/|MicroMessenger|; wv\)/i.test(ua);
+  }catch(e){ return false; }
+}
 
 function setStatus(msg, cls){
   var el = $("status");
@@ -1760,16 +1866,8 @@ function onXls(){
   try{ rows = buildRows(); }
   catch(e){ setStatus("Не получилось собрать таблицу.", "err"); return; }
 
-  if(!EMBEDDED){
-    try{
-      downloadFile(fileBase() + ".csv", toCsv(rows), "text/csv;charset=utf-8");
-      setStatus("Файл сохранён. Открой его двойным кликом — Excel подхватит формулы.", "ok");
-    }catch(e){
-      setStatus("Не получилось сохранить файл.", "err");
-    }
-    return;
-  }
-
+  /* Копирование в буфер работает везде, включая встроенные браузеры,
+     а скачивание файла там молча проваливается — поэтому копируем всегда. */
   var txt = toTsv(rows);
   btn.disabled = true;
   copyText(txt).then(function(){
@@ -1777,7 +1875,7 @@ function onXls(){
     setStatus("Скопировано. Открой пустой лист Excel, встань в ячейку A1 и вставь — таблица разложится по столбцам, формулы будут живыми.", "ok");
     btn.disabled = false;
   }, function(){
-    setStatus("Браузер не дал доступ к буферу обмена.", "err");
+    setStatus("Браузер не дал доступ к буферу обмена — скопируй текст ниже вручную.", "err");
     showCopyFallback(txt);
     btn.disabled = false;
   });

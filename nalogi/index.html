@@ -170,6 +170,13 @@ ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;f
 .legend{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:5px;font-size:13.5px}
 .legend li{display:flex;gap:8px}
 .legend span{width:9px;height:9px;border-radius:2px;background:#FFE9A3;flex:none;margin-top:5px;border:1px solid var(--line)}
+/* форма заявки */
+/* кнопка «написать в Telegram» внутри тёмного блока */
+.tgbtn{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;text-decoration:none;
+  font-family:var(--display);font-weight:800;font-size:17px;border-radius:9px;padding:12px 19px;
+  background:var(--accent);color:var(--accent-ink)}
+.tgbtn svg{width:19px;height:19px;flex:none;fill:currentColor}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -469,6 +476,163 @@ ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;f
     return b;
   }
 
+  /* ============================================================
+     СБОР ЗАЯВОК — две строки ниже меняются руками
+     ============================================================
+     Формы на странице нет: человек ничего не печатает. Ответы сами
+     уходят в таблицу — один раз, когда он досмотрел результат, и
+     второй, когда нажал «Написать в Telegram». В Telegram сообщение
+     приходит только во втором случае, прямо перед тем, как человек
+     напишет сам.
+
+     SCRIPT_URL — адрес Google Apps Script, тот же, что у карты и
+     ипотеки. Пока пусто — страница просто ничего никуда не шлёт.
+     TG_CONTACT — куда ведёт кнопка. Для ссылки на человека к ней
+     добавляется готовый текст; для ссылки на бота Telegram текст
+     игнорирует и показывает только кнопку «Начать». */
+  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMYpX_oDFgngsyjZQhBiLKjwqlTbbZQDwoQk9ahKyQd5iVJfjl9HlgS1uBAOx_7CwtaQ/exec";
+  var TG_CONTACT = "https://t.me/m_ainazik_k";
+
+  /* Бот @ainazik_mamaeva_bot, он же пишет Айназик в Telegram. Страница
+     обращается к нему напрямую, минуя Apps Script: иначе скрипту
+     понадобилось бы право ходить во внешнюю сеть и повторная
+     авторизация Google. CORS на той стороне открыт только для
+     ainazik05072004-spec.github.io, поэтому с локального адреса или
+     из артефакта этот вызов не пройдёт — так и задумано. */
+  var BOT_URL = "https://ainazik.marmafin.xyz/api/lead";
+
+  /* true — если TG_CONTACT ведёт на человека, а не на бота */
+  var TG_IS_PERSON = true;
+
+  /* метка канала из адреса: ?src=ig, ?src=reels и так далее */
+  var SRC = (function(){
+    try{ return new URLSearchParams(location.search).get("src") || "прямой заход"; }
+    catch(e){ return "прямой заход"; }
+  })();
+
+  /* человеческие подписи к ответам — и для таблицы, и для сообщения в Telegram */
+  var LABELS = {
+    form:{ip:"ИП", too:"ОсОО или другое юрлицо"},
+    mode:{simple:"Единый налог", general:"Общий режим", patent:"Патент", unknown:"Не знает"},
+    act:{trade:"Торговля", prod:"Производство, переработка сельхозпродукции",
+      sewing:"Швейное и текстильное производство", jewelry:"Ювелирные изделия",
+      food:"Общественное питание", sauna:"Сауна или баня",
+      build:"Продажа вновь построенных помещений", soft:"ПО, туроператор, турагент",
+      services:"Услуги населению", other:"Другое"},
+    city:{bo:"Бишкек или Ош", reg:"Другой регион"},
+    rev:{lt15:"До 15 млн", m15_50:"От 15 до 50 млн", gt50:"Больше 50 млн"},
+    account:{biz:"Бизнес-счёт", both:"И бизнес-счёт, и личная карта",
+      personal:"Личная карта", cash:"Только наличные"},
+    staff:{no:"Нет", yes:"Есть"},
+    kkm:{fiscal:"Фискальная", unsure:"Не знает, фискальная ли", no:"Кассы нет"},
+    pay:{card:"Чаще безнал", cash:"Чаще наличные"},
+    trader:{no:"Нет", yes:"Да"},
+    tech:{no:"Нет", yes:"Да"},
+    ecp:{me:"У себя", other:"У бухгалтера или помощника", dunno:"Не знает, где"}
+  };
+  function lbl(k){ var v = answers[k]; return (v && LABELS[k] && LABELS[k][v]) || ""; }
+
+  function rateText(r){
+    if(r.kind === "general") return "Общий режим: НДС 12% + прибыль 10%";
+    if(r.kind === "patent")  return "Патент";
+    return r.rate;
+  }
+
+  /* уходит вся картина ответов — чтобы было видно, с чем человек
+     пришёл, ещё до того, как он напишет первое слово */
+  function logPayload(r, f, al, kind){
+    return {
+      page: "Налоги",
+      kind: kind,
+      src: SRC,
+      forma: lbl("form"),
+      rejim: lbl("mode"),
+      act: lbl("act"),
+      city: lbl("city"),
+      rev: lbl("rev"),
+      account: lbl("account"),
+      staff: lbl("staff"),
+      kkm: lbl("kkm"),
+      pay: lbl("pay"),
+      trader: lbl("trader"),
+      tech: lbl("tech"),
+      ecp: lbl("ecp"),
+      rate: rateText(r),
+      basis: r.basis || "",
+      finding: f.length ? f[0].t : "по ставке чисто",
+      risk: al.length ? al[0].t : ""
+    };
+  }
+
+  /* Сообщение Айназик в Telegram. Смысл не «вот контакт, напиши ему»,
+     а «сейчас тебе напишет человек, вот его ситуация»: через секунду
+     он сам постучится в личку, и она откроет его сообщение, уже зная,
+     с чем он пришёл. */
+  function notifyBot(r, f, al){
+    var rows = [
+      ["Ставка", rateText(r) + (r.basis ? " — " + r.basis : "")],
+      ["Находка", f.length ? f[0].t : "по ставке чисто"],
+      ["Риск", al.length ? al[0].t : ""],
+      ["", ""],
+      ["Форма", lbl("form")],
+      ["Режим", lbl("mode")],
+      ["Деятельность", lbl("act")],
+      ["Город", lbl("city")],
+      ["Выручка", lbl("rev")],
+      ["Деньги", lbl("account")],
+      ["Работники", lbl("staff")],
+      ["Касса", lbl("kkm")],
+      ["Оплата", lbl("pay")],
+      ["Импорт-экспорт", lbl("trader")],
+      ["Техника", lbl("tech")],
+      ["ЭЦП", lbl("ecp")],
+      ["", ""],
+      ["Источник", SRC]
+    ];
+    var text = rows.filter(function(x){ return x[0] === "" || x[1]; })
+      .map(function(x){ return x[0] ? x[0] + ": " + x[1] : ""; })
+      .join("\n").replace(/\n{3,}/g, "\n\n").slice(0, 2500);
+
+    try{
+      fetch(BOT_URL, {
+        method: "POST",
+        keepalive: true,
+        headers: {"Content-Type": "application/json"},
+        /* contact у бота обязателен, а формы здесь нет и контакта мы
+           не знаем — человек представится сам в переписке */
+        body: JSON.stringify({ source: "nalogi", contact: "напишет сам в личку", summary: text })
+      }).catch(function(){});
+    }catch(e){}
+  }
+
+  /* Одна и та же картина не должна уходить дважды: человек может
+     нажать кнопку, вернуться и нажать ещё раз. Ключ — набор ответов
+     вместе с типом события, так что «прошёл» и «нажал» считаются
+     отдельно, а повтор того же — нет. */
+  var sent = {};
+
+  function logAnswers(r, f, al, kind){
+    if(!SCRIPT_URL) return;
+    var data = logPayload(r, f, al, kind);
+    var key = JSON.stringify(data);
+    if(sent[key]) return;
+    sent[key] = true;
+
+    /* text/plain — чтобы браузер не слал предварительный запрос, который
+       Apps Script не умеет обрабатывать. Ответ прочитать нельзя: чужой
+       домен, поэтому отправляем «вслепую» — так устроена безопасность.
+       keepalive — чтобы отправка пережила уход на Telegram. */
+    try{
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+        headers: {"Content-Type": "text/plain;charset=utf-8"},
+        body: key
+      }).catch(function(){});
+    }catch(e){}
+  }
+
   function show(){
     var a = answers, r = computeRate(a), out = $("result"), f = findings(a,r), al = alerts(a);
     out.hidden = false; out.textContent = "";
@@ -515,12 +679,31 @@ ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;f
     var cta = el("div","cta"), ctd = el("div");
     ctd.appendChild(el("h3", null, "Хотите, чтобы это посчитала я?"));
     ctd.appendChild(el("p", null, "Эта страница считает по вашим ответам. Она не видит договоров и выписок — а переплата обычно прячется именно там."));
-    ctd.appendChild(el("span","word","напишите слово «налоги»"));
-    ctd.appendChild(el("span","handle","в директ @ainazik.mamaevaa"));
+
+    var tg = el("a","tgbtn");
+    /* готовый текст Telegram подставляет только в переписку с человеком;
+       у бота он его игнорирует, поэтому там ссылка остаётся голой */
+    tg.href = TG_CONTACT + (TG_IS_PERSON ? "?text=" + encodeURIComponent(
+      "Налоги. Прошёл(ла) чек-ап: " + lbl("form") + ", " + lbl("act") +
+      ", ставка " + rateText(r) + ". Хочу разбор.") : "");
+    tg.target = "_blank"; tg.rel = "noopener";
+    tg.addEventListener("click", function(){
+      logAnswers(r, f, al, "нажал написать");   // строка в таблицу
+      notifyBot(r, f, al);                      // сообщение в Telegram
+    });
+    var ico = document.createElementNS("http://www.w3.org/2000/svg","svg");
+    ico.setAttribute("viewBox","0 0 24 24"); ico.setAttribute("aria-hidden","true");
+    var pth = document.createElementNS("http://www.w3.org/2000/svg","path");
+    pth.setAttribute("d","M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.3-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13.1 1.4 11.6c-1-.3-1.1-1 .2-1.5l19-7.3c.9-.3 1.6.2 1.3 1.5z");
+    ico.appendChild(pth); tg.appendChild(ico);
+    tg.appendChild(document.createTextNode("Написать в Telegram"));
+    ctd.appendChild(tg);
+
+    ctd.appendChild(el("span","handle","или слово «налоги» в директ @ainazik.mamaevaa"));
     cta.appendChild(ctd); cta.appendChild(sticker("girl_think"));
     out.appendChild(cta);
 
-    /* 5. Всё остальное — свёрнуто */
+    /* 6. Всё остальное — свёрнуто */
     var d = document.createElement("details");
     var s = document.createElement("summary"); s.appendChild(document.createTextNode("Что ещё я проверила"));
     d.appendChild(s);
@@ -603,6 +786,10 @@ ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;f
       $("intro").hidden = false; window.scrollTo({top:0,behavior:"smooth"});
     });
     rs.appendChild(again); out.appendChild(rs);
+
+    /* человек дошёл до результата — складываем его картину в таблицу.
+       В Telegram это не уходит: там только те, кто нажал кнопку. */
+    logAnswers(r, f, al, "прошёл");
 
     window.scrollTo({top:0,behavior:"smooth"});
   }

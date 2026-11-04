@@ -188,6 +188,8 @@ input:focus,select:focus{outline:none; border-color:var(--deep); box-shadow:0 0 
 .leadbtn:hover{opacity:.88}
 .leadbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 .leadbtn[disabled]{opacity:.5; cursor:default}
+/* та же кнопка, но ссылкой — ведёт в Telegram */
+a.leadbtn{display:block; text-align:center; text-decoration:none}
 .status{margin-top:13px; font-size:14.5px; color:var(--ink-2); min-height:20px}
 .status.err{color:var(--neg)}
 .status.ok{color:var(--pos)}
@@ -338,6 +340,11 @@ img{max-width:100%}
     </label>
     <button class="leadbtn" id="btnLead" type="button">Отправить и посмотреть расчёт</button>
     <p class="status" id="leadStatus" role="status"></p>
+    <!-- появляется после отправки: бот пришлёт этот же расчёт в переписку -->
+    <div id="botBox" hidden style="margin-top:14px">
+      <p class="status" style="margin-bottom:10px">Чтобы расчёт не потерялся вместе с вкладкой, забери его в Telegram — там же будет кнопка написать мне.</p>
+      <a class="leadbtn" id="btnBot" href="#" target="_blank" rel="noopener">Открыть в Telegram</a>
+    </div>
   </section>
 
   <section class="card" id="cardFlat">
@@ -443,6 +450,76 @@ img{max-width:100%}
       развёртывание» и заканчивается на /exec. Пока пусто — форма работает,
       но данные никуда не уходят: она просто скажет, что не настроена. */
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMYpX_oDFgngsyjZQhBiLKjwqlTbbZQDwoQk9ahKyQd5iVJfjl9HlgS1uBAOx_7CwtaQ/exec";
+
+/* Бот @ainazik_mamaeva_bot. Страница обращается к нему напрямую, минуя
+   Apps Script: иначе скрипту понадобилось бы право ходить во внешнюю
+   сеть и повторная авторизация Google. CORS на той стороне открыт
+   только для ainazik05072004-spec.github.io — с локального адреса и из
+   артефакта вызов не пройдёт, так и задумано. */
+var BOT_URL = "https://ainazik.marmafin.xyz/api/lead";
+var BOT_START = "https://t.me/ainazik_mamaeva_bot?start=";
+var BOT_SOURCE = "ipoteka";
+
+/* Телеграм запрещает боту писать первым: пока человек не нажал
+   «Начать», бот его не знает и не имеет права к нему обращаться.
+   Поэтому расчёт уходит боту вместе со случайным кодом, а кнопка ведёт
+   на этот код. Человек жмёт «Начать» — бот узнаёт его, отдаёт расчёт и
+   показывает кнопку написать Айназик. */
+function newCode(){
+  var abc = "abcdefghijklmnopqrstuvwxyz0123456789", s = "", i;
+  try{
+    var b = new Uint8Array(16);
+    crypto.getRandomValues(b);
+    for(i = 0; i < 16; i++) s += abc[b[i] % abc.length];
+  }catch(e){
+    for(i = 0; i < 16; i++) s += abc[Math.floor(Math.random() * abc.length)];
+  }
+  return s;
+}
+var botCode = newCode();
+
+function botSummary(p){
+  var rows = [
+    ["Программа", p.program],
+    ["Категория", p.category],
+    ["Объект", p.project + (p.flat ? ", " + p.flat : "")],
+    ["Стоимость", p.cost ? som(p.cost) : ""],
+    ["", ""],
+    ["Доход", p.income ? som(p.income) : ""],
+    ["Накоплено", p.saved ? som(p.saved) : ""],
+    ["Откладывает", p.monthly ? som(p.monthly) + " в месяц" : ""],
+    ["", ""],
+    ["Нужно своими", p.need30 ? som(p.need30) : ""],
+    ["Не хватает", p.gap ? som(p.gap) : "всё есть"],
+    ["Платёж 1–5 лет", p.payFirst5 ? som(p.payFirst5) : ""],
+    ["Платёж после", p.payAfter ? som(p.payAfter) : ""],
+    ["", ""],
+    ["Источник", p.src]
+  ];
+  return rows.filter(function(x){ return x[0] === "" || x[1]; })
+    .map(function(x){ return x[0] ? x[0] + ": " + x[1] : ""; })
+    .join("\n").replace(/\n{3,}/g, "\n\n").slice(0, 2500);
+}
+
+/* Здесь форма обязательна — расчёт без неё не открывается, так что
+   контакт есть всегда и Айназик узнаёт о заявке сразу. */
+function sendToBot(p){
+  try{
+    fetch(BOT_URL, {
+      method: "POST",
+      keepalive: true,
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        source: BOT_SOURCE,
+        code: botCode,
+        notify: true,
+        name: p.name,
+        contact: p.phone,
+        summary: botSummary(p)
+      })
+    }).catch(function(){});
+  }catch(e){}
+}
 
 /* 2. Как работает форма:
       "soft" — расчёт открыт сразу, форма стоит перед ним и её можно пропустить.
@@ -924,6 +1001,11 @@ function phoneDigits(v){ return String(v || "").replace(/[^0-9]/g, ""); }
 /* после отправки контакта просто пересобираем экран: видимость
    считается в renderGate, там же учитывается уже отправленный контакт */
 function unlock(){
+  var box = $("botBox");
+  if(box){
+    $("btnBot").href = BOT_START + botCode;
+    box.hidden = false;
+  }
   render();
   var el = $("cardFlat");
   if(el && !el.hidden) el.scrollIntoView({block:"start", behavior:"smooth"});
@@ -972,6 +1054,10 @@ $("btnLead").addEventListener("click", function(){
 
   btn.disabled = true;
   setLead("Отправляю…");
+
+  var payload = leadPayload();
+  sendToBot(payload);   // Айназик увидит заявку в Telegram сразу
+
   /* text/plain — чтобы браузер не слал предварительный запрос, который
      Apps Script не умеет обрабатывать. Ответ прочитать нельзя: это чужой
      домен, поэтому отправляем «вслепую» — так устроена безопасность браузера. */
@@ -979,7 +1065,7 @@ $("btnLead").addEventListener("click", function(){
     method: "POST",
     mode: "no-cors",
     headers: {"Content-Type": "text/plain;charset=utf-8"},
-    body: JSON.stringify(leadPayload())
+    body: JSON.stringify(payload)
   }).then(function(){
     markLeadSent(); unlock(); btn.disabled = true;
     btn.textContent = "Отправлено";

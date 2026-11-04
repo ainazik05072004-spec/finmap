@@ -481,28 +481,39 @@ ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;f
      ============================================================
      Формы на странице нет: человек ничего не печатает. Ответы сами
      уходят в таблицу — один раз, когда он досмотрел результат, и
-     второй, когда нажал «Написать в Telegram». В Telegram сообщение
-     приходит только во втором случае, прямо перед тем, как человек
-     напишет сам.
+     второй, когда нажал кнопку в Telegram.
 
      SCRIPT_URL — адрес Google Apps Script, тот же, что у карты и
-     ипотеки. Пока пусто — страница просто ничего никуда не шлёт.
-     TG_CONTACT — куда ведёт кнопка. Для ссылки на человека к ней
-     добавляется готовый текст; для ссылки на бота Telegram текст
-     игнорирует и показывает только кнопку «Начать». */
+     ипотеки. Пока пусто — страница просто ничего никуда не шлёт. */
   var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMYpX_oDFgngsyjZQhBiLKjwqlTbbZQDwoQk9ahKyQd5iVJfjl9HlgS1uBAOx_7CwtaQ/exec";
-  var TG_CONTACT = "https://t.me/m_ainazik_k";
 
-  /* Бот @ainazik_mamaeva_bot, он же пишет Айназик в Telegram. Страница
-     обращается к нему напрямую, минуя Apps Script: иначе скрипту
-     понадобилось бы право ходить во внешнюю сеть и повторная
-     авторизация Google. CORS на той стороне открыт только для
-     ainazik05072004-spec.github.io, поэтому с локального адреса или
-     из артефакта этот вызов не пройдёт — так и задумано. */
+  /* Бот @ainazik_mamaeva_bot. Страница обращается к нему напрямую,
+     минуя Apps Script: иначе скрипту понадобилось бы право ходить во
+     внешнюю сеть и повторная авторизация Google. CORS на той стороне
+     открыт только для ainazik05072004-spec.github.io, поэтому с
+     локального адреса или из артефакта вызов не пройдёт — так и
+     задумано, проверять надо на живом сайте. */
   var BOT_URL = "https://ainazik.marmafin.xyz/api/lead";
+  var BOT_START = "https://t.me/ainazik_mamaeva_bot?start=";
 
-  /* true — если TG_CONTACT ведёт на человека, а не на бота */
-  var TG_IS_PERSON = true;
+  /* Телеграм запрещает боту писать первым: пока человек не нажал
+     «Начать», бот не знает его и не имеет права к нему обращаться.
+     Поэтому разбор уходит боту заранее, вместе со случайным кодом, а
+     кнопка ведёт на этот код. Человек жмёт «Начать» — бот узнаёт его
+     по коду, отдаёт разбор и показывает кнопку «Написать Айназик».
+     Только в этот момент Айназик получает уведомление, и в нём
+     впервые есть настоящий контакт: @ник или ссылка на человека. */
+  function newCode(){
+    var abc = "abcdefghijklmnopqrstuvwxyz0123456789", s = "", i;
+    try{
+      var b = new Uint8Array(16);
+      crypto.getRandomValues(b);
+      for(i = 0; i < 16; i++) s += abc[b[i] % abc.length];
+    }catch(e){
+      for(i = 0; i < 16; i++) s += abc[Math.floor(Math.random() * abc.length)];
+    }
+    return s;
+  }
 
   /* метка канала из адреса: ?src=ig, ?src=reels и так далее */
   var SRC = (function(){
@@ -564,11 +575,10 @@ ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;f
     };
   }
 
-  /* Сообщение Айназик в Telegram. Смысл не «вот контакт, напиши ему»,
-     а «сейчас тебе напишет человек, вот его ситуация»: через секунду
-     он сам постучится в личку, и она откроет его сообщение, уже зная,
-     с чем он пришёл. */
-  function notifyBot(r, f, al){
+  /* Кладём разбор в бота заранее, под кодом. Пока человек не нажал
+     «Начать», бот молчит и Айназик ничего не получает: notify=false.
+     Уведомит он её сам, в момент нажатия, — и уже с контактом. */
+  function sendToBot(r, f, al, code){
     var rows = [
       ["Ставка", rateText(r) + (r.basis ? " — " + r.basis : "")],
       ["Находка", f.length ? f[0].t : "по ставке чисто"],
@@ -598,10 +608,9 @@ ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;f
         method: "POST",
         keepalive: true,
         headers: {"Content-Type": "application/json"},
-        /* contact не передаём: формы здесь нет, человек представится
-           сам в переписке. Бот это понимает и шлёт «сейчас напишут
-           вам в личку» вместо обычного «Заявка» с кнопкой */
-        body: JSON.stringify({ source: "nalogi", summary: text })
+        /* contact не передаём: формы здесь нет, человека бот узнает
+           сам, когда тот нажмёт «Начать» */
+        body: JSON.stringify({ source: "nalogi", code: code, notify: false, summary: text })
       }).catch(function(){});
     }catch(e){}
   }
@@ -677,27 +686,25 @@ ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;f
     out.appendChild(c);
 
     /* 4. CTA */
+    var code = newCode();
+    sendToBot(r, f, al, code);   // разбор ложится в бота заранее, молча
+
     var cta = el("div","cta"), ctd = el("div");
-    ctd.appendChild(el("h3", null, "Хотите, чтобы это посчитала я?"));
-    ctd.appendChild(el("p", null, "Эта страница считает по вашим ответам. Она не видит договоров и выписок — а переплата обычно прячется именно там."));
+    ctd.appendChild(el("h3", null, "Забрать разбор в Telegram"));
+    ctd.appendChild(el("p", null, "Бот пришлёт этот результат вам в переписку, чтобы он не потерялся вместе с вкладкой. Там же будет кнопка написать Айназик — она смотрит договоры и выписки, а страница их не видит."));
 
     var tg = el("a","tgbtn");
-    /* готовый текст Telegram подставляет только в переписку с человеком;
-       у бота он его игнорирует, поэтому там ссылка остаётся голой */
-    tg.href = TG_CONTACT + (TG_IS_PERSON ? "?text=" + encodeURIComponent(
-      "Налоги. Прошёл(ла) чек-ап: " + lbl("form") + ", " + lbl("act") +
-      ", ставка " + rateText(r) + ". Хочу разбор.") : "");
+    tg.href = BOT_START + code;
     tg.target = "_blank"; tg.rel = "noopener";
     tg.addEventListener("click", function(){
-      logAnswers(r, f, al, "нажал написать");   // строка в таблицу
-      notifyBot(r, f, al);                      // сообщение в Telegram
+      logAnswers(r, f, al, "нажал написать");
     });
     var ico = document.createElementNS("http://www.w3.org/2000/svg","svg");
     ico.setAttribute("viewBox","0 0 24 24"); ico.setAttribute("aria-hidden","true");
     var pth = document.createElementNS("http://www.w3.org/2000/svg","path");
     pth.setAttribute("d","M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.3-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13.1 1.4 11.6c-1-.3-1.1-1 .2-1.5l19-7.3c.9-.3 1.6.2 1.3 1.5z");
     ico.appendChild(pth); tg.appendChild(ico);
-    tg.appendChild(document.createTextNode("Написать в Telegram"));
+    tg.appendChild(document.createTextNode("Открыть в Telegram"));
     ctd.appendChild(tg);
 
     ctd.appendChild(el("span","handle","или слово «налоги» в директ @ainazik.mamaevaa"));

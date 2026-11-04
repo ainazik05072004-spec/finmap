@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="color-scheme" content="light dark">
+<meta name="author" content="Айназик Мамаева">
+<meta name="description" content="Несколько вопросов в одно нажатие — и видно вашу ставку по единому налогу и где сейчас ваши риски. По Налоговому кодексу КР в редакции от 06.08.2026.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="Айназик Мамаева · финансовый консультант">
+<meta property="og:url" content="https://ainazik05072004-spec.github.io/finmap/nalogi/">
+<meta property="og:title" content="Налоговый чек-ап — ваша ставка и ваши риски">
+<meta property="og:description" content="Несколько вопросов в одно нажатие — и видно вашу ставку по единому налогу и где сейчас ваши риски. Для предпринимателей Кыргызстана.">
+<meta property="og:image" content="https://ainazik05072004-spec.github.io/finmap/og-nalogi.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Налоговый чек-ап для предпринимателей Кыргызстана">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231C1A16'/%3E%3Crect x='9' y='7' width='14' height='18' rx='2' fill='%23E0A100'/%3E%3Crect x='12' y='11' width='8' height='1.8' fill='%231C1A16'/%3E%3Crect x='12' y='15' width='8' height='1.8' fill='%231C1A16'/%3E%3Crect x='12' y='19' width='5' height='1.8' fill='%231C1A16'/%3E%3C/svg%3E">
+<title>Налоговый чек-ап</title>
+<style>
+/* Базовые правила: в артефакте их подставляла оболочка, на сайте их
+   нужно задать самим. Главное здесь — [hidden] с !important: у блока
+   результата есть inline display:flex, и без !important он был бы
+   виден сразу при открытии страницы. */
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]:not([hidden="until-found"]){display:none!important}
+</style>
+</head>
+<body>
+<title>Налоговый чек-ап</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@500;700;800&family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+/* Layout: narrow document column; one question per screen, then a short verdict with everything else folded away */
+:root{
+  --bg:#FAF7F0; --surface:#FFFFFF; --surface-2:#F2EDE1;
+  --ink:#1C1A16; --muted:#6E675B; --line:#E3DCCD;
+  --accent:#E0A100; --accent-soft:#FBEBBF; --accent-ink:#2A2000;
+  --good:#2C6E49; --good-soft:#DFEFE4;
+  --warn:#9C4A12; --warn-soft:#FAE5D4;
+  --crit:#9B1C1C; --crit-soft:#F8DEDE;
+  --display:'Onest',ui-sans-serif,system-ui,sans-serif;
+  --body:'Golos Text',ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141310; --surface:#1D1B16; --surface-2:#24211A;
+  --ink:#F2EDE0; --muted:#A79E8B; --line:#332F26;
+  --accent:#F3C44A; --accent-soft:#3A2F10; --accent-ink:#1A1400;
+  --good:#7FC79B; --good-soft:#1B2C22;
+  --warn:#E6975F; --warn-soft:#2F2016;
+  --crit:#E58282; --crit-soft:#2E1919;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#141310; --surface:#1D1B16; --surface-2:#24211A;
+  --ink:#F2EDE0; --muted:#A79E8B; --line:#332F26;
+  --accent:#F3C44A; --accent-soft:#3A2F10; --accent-ink:#1A1400;
+  --good:#7FC79B; --good-soft:#1B2C22;
+  --warn:#E6975F; --warn-soft:#2F2016;
+  --crit:#E58282; --crit-soft:#2E1919;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.wrap{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:18px;padding-block:26px 56px}
+img{max-width:100%}
+
+.masthead{display:flex;align-items:flex-end;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.masthead div{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.masthead img{width:96px;flex:none;margin-bottom:-12px}
+.eyebrow{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(26px,6.5vw,36px);line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.02em}
+.sub{color:var(--muted);font-size:13.5px;margin:0}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.lede{font-size:17px;margin:0 0 16px}
+.lede strong{font-weight:600}
+.intro-row{display:flex;gap:16px;align-items:flex-end}
+.intro-row img{width:112px;flex:none}
+.intro-row > div{flex:1;min-width:0}
+
+button{font:inherit;cursor:pointer}
+.btn{font-family:var(--display);font-weight:700;font-size:15px;border:none;border-radius:10px;
+  background:var(--accent);color:var(--accent-ink);padding:13px 22px;width:100%;transition:filter .15s}
+.btn:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:600;width:auto;padding:10px 16px;font-size:14px}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+
+.prog{display:flex;align-items:center;gap:12px;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{flex:1;height:5px;background:var(--surface-2);border-radius:99px;overflow:hidden;min-width:0}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s ease}
+
+h2{font-family:var(--display);font-weight:700;font-size:clamp(19px,4.4vw,24px);line-height:1.2;margin:0 0 6px;text-wrap:balance}
+.hint{color:var(--muted);font-size:13.5px;margin:0 0 16px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:center;gap:11px;text-align:left;width:100%;background:var(--surface-2);
+  border:1.5px solid transparent;border-radius:10px;padding:13px 15px;color:var(--ink);font-size:15px;font-weight:500;transition:border-color .12s}
+.opt:hover{border-color:var(--accent)}
+.opt b{font-family:var(--display);font-size:12px;font-weight:700;color:var(--muted);min-width:14px}
+
+.verdict{border:2px solid var(--ink);border-radius:14px;background:var(--accent-soft);padding:20px;
+  display:flex;align-items:flex-end;gap:12px}
+.verdict > div{flex:1;min-width:0}
+.verdict img{width:84px;flex:none;margin-bottom:-6px}
+.label{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.rate{font-family:var(--display);font-weight:800;font-size:clamp(40px,12vw,62px);line-height:1;letter-spacing:-.03em;margin:8px 0 4px;font-variant-numeric:tabular-nums}
+.basis{font-size:14px;color:var(--muted);margin:0}
+
+h3{font-family:var(--display);font-weight:700;font-size:17px;margin:0 0 8px}
+.card p{margin:0;font-size:15px}
+.card p + p{margin-top:9px}
+.card.crit{background:var(--crit-soft);border-color:var(--crit)}
+.card.good{background:var(--good-soft);border-color:var(--good)}
+.card.focus{border-left:4px solid var(--accent)}
+.with-sticker{display:flex;gap:14px;align-items:flex-start}
+.with-sticker > div{flex:1;min-width:0}
+.with-sticker img{width:76px;flex:none}
+
+.cta{background:var(--ink);color:var(--bg);border-radius:14px;padding:22px 20px;display:flex;gap:14px;align-items:flex-end}
+.cta > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+.cta img{width:92px;flex:none;margin-bottom:-4px}
+.cta h3{color:var(--bg);font-size:20px;margin:0}
+.cta p{margin:0;font-size:14.5px;opacity:.85}
+.word{display:inline-flex;background:var(--accent);color:var(--accent-ink);
+  font-family:var(--display);font-weight:800;font-size:18px;border-radius:9px;padding:11px 18px;align-self:flex-start}
+.handle{font-family:var(--display);font-weight:600;font-size:14px;opacity:.75}
+
+details{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+summary{font-family:var(--display);font-weight:700;font-size:15px;padding:16px 20px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"＋";color:var(--muted);font-weight:500}
+details[open] summary::after{content:"－"}
+.inner{padding:0 20px 20px;display:flex;flex-direction:column;gap:18px}
+.block h4{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.rows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rows li{display:flex;gap:12px;align-items:baseline;font-size:14px;padding-bottom:8px;border-bottom:1px dashed var(--line)}
+.rows li:last-child{border-bottom:none;padding-bottom:0}
+.rows .when{font-family:var(--display);font-weight:700;font-size:13px;min-width:86px;flex:none;color:var(--accent);font-variant-numeric:tabular-nums}
+ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.note{font-size:14px;margin:0 0 10px;padding-left:12px;border-left:2px solid var(--line)}
+.note:last-child{margin-bottom:0}
+.note b{font-weight:600;display:block}
+.fineprint{font-size:12px;color:var(--muted);line-height:1.5;margin:0}
+.restart{display:flex;justify-content:center;align-items:center;gap:10px}
+.restart img{width:52px}
+
+/* чек */
+.receipt-wrap{overflow-x:auto}
+.receipt{width:272px;background:#FFFDF8;color:#1C1A16;border:1px solid #D8D0BE;border-radius:4px;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11px;line-height:1.5;padding:14px 13px;
+  box-shadow:0 1px 0 #D8D0BE}
+.receipt .c{text-align:center}
+.receipt .hr{border-top:1px dashed #B9B0A0;margin:7px 0}
+.receipt .ln{display:flex;justify-content:space-between;gap:8px}
+.receipt .big{font-weight:700;font-size:13px}
+.receipt mark{background:#FFE9A3;color:#1C1A16;padding:0 2px;border-radius:2px}
+.qr{width:62px;height:62px;margin:8px auto 0;display:block}
+.legend{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:5px;font-size:13.5px}
+.legend li{display:flex;gap:8px}
+.legend span{width:9px;height:9px;border-radius:2px;background:#FFE9A3;flex:none;margin-top:5px;border:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <span class="eyebrow">Для предпринимателей Кыргызстана</span>
+      <h1>Налоговый чек-ап</h1>
+      <p class="sub">По Налоговому кодексу КР в редакции от 06.08.2026</p>
+    </div>
+    <img src="stickers/cat_stand.png" alt="" aria-hidden="true">
+  </header>
+
+  <section id="intro" class="card">
+    <div class="intro-row">
+      <div>
+        <p class="lede">Несколько вопросов в одно нажатие — и вы увидите <strong>свою ставку</strong> и где сейчас ваши риски.</p>
+      </div>
+      <img src="stickers/girl_full.png" alt="" aria-hidden="true">
+    </div>
+    <button class="btn" id="start">Начать · 3 минуты</button>
+  </section>
+
+  <section id="quiz" class="card" hidden>
+    <div class="prog"><span id="pcount"></span><span class="bar"><i id="pbar"></i></span></div>
+    <div style="margin-top:18px">
+      <h2 id="qtitle"></h2>
+      <p class="hint" id="qhint"></p>
+      <div class="opts" id="qopts"></div>
+      <div style="margin-top:16px"><button class="btn ghost" id="back">Назад</button></div>
+    </div>
+  </section>
+
+  <section id="result" hidden style="display:flex;flex-direction:column;gap:18px"></section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var is = function(k,v){ return function(a){ return a[k] === v; }; };
+  var rateActs = ["trade","prod","soft","services","other"];
+  var peopleActs = ["trade","food","services","sauna","other"];
+
+  var QUESTIONS = [
+    { id:"form", title:"Кто вы по форме?", hint:"От этого зависит часть ставок и обязанностей.",
+      opts:[["ip","Индивидуальный предприниматель"],["too","ОсОО или другое юрлицо"]] },
+
+    { id:"mode", title:"На каком вы режиме?", hint:"Если не уверены — так и ответьте, я это учту.",
+      opts:[["simple","Единый налог (упрощёнка)"],["general","Общий режим"],["patent","Патент"],["unknown","Не знаю"]] },
+
+    { id:"act", title:"Чем вы занимаетесь?", hint:"Если видов несколько — выберите тот, что даёт основную выручку.",
+      opts:[["trade","Торговля"],["prod","Производство или переработка сельхозпродукции"],
+            ["sewing","Швейное или текстильное производство"],["jewelry","Ювелирные изделия"],
+            ["food","Общественное питание"],["sauna","Сауна или баня"],
+            ["build","Продажа вновь построенных помещений"],
+            ["soft","Разработка ПО, туроператор или турагент"],
+            ["services","Услуги населению"],["other","Другое"]] },
+
+    { id:"city", title:"Где вы работаете?", hint:"В общепите ставка в столице и в регионах отличается почти вдвое.",
+      when: is("act","food"),
+      opts:[["bo","Бишкек или Ош"],["reg","Другой регион"]] },
+
+    { id:"rev", title:"Выручка за последние 12 месяцев подряд?", hint:"Именно за 12 месяцев подряд, а не за календарный год.",
+      opts:[["lt15","До 15 млн сомов"],["m15_50","От 15 до 50 млн"],["gt50","Больше 50 млн"]] },
+
+    { id:"account", title:"На какой счёт вам приходят деньги?",
+      hint:"Бизнес-счёт — тот, что открыт на ИП или ОсОО: МБизнес, Бакай Бизнес и подобные приложения для бизнеса. Личный — оформленный на вас как на физлицо.",
+      opts:[["biz","На бизнес-счёт ИП или ОсОО"],["both","И на бизнес-счёт, и на личную карту"],
+            ["personal","На личную карту"],["cash","Только наличными"]] },
+
+    { id:"staff", title:"Есть наёмные работники?", hint:"Хотя бы один оформленный человек.",
+      opts:[["no","Нет, работаю один"],["yes","Да, есть"]] },
+
+    { id:"kkm", title:"Какая у вас касса?",
+      hint:"Если вы работаете с населением, касса должна быть фискальной. Как выглядит фискальный чек — покажу в конце.",
+      when: function(a){ return peopleActs.indexOf(a.act) >= 0; },
+      opts:[["fiscal","Фискальная, чек с фискальным признаком"],["unsure","Касса есть, но фискальная ли — не знаю"],["no","Кассы нет"]] },
+
+    { id:"pay", title:"Как с вами чаще расплачиваются?", hint:"Наличные и безнал облагаются по разным ставкам.",
+      when: function(a){ return rateActs.indexOf(a.act) >= 0; },
+      opts:[["card","Чаще безналично"],["cash","Чаще наличными"]] },
+
+    { id:"trader", title:"Вы импортируете, экспортируете или работаете дистрибьютором?",
+      hint:"Сюда же — ГСМ, лекарства и зоны торговли с особым режимом.",
+      when: is("act","trade"),
+      opts:[["no","Нет"],["yes","Да, что-то из этого есть"]] },
+
+    { id:"tech", title:"Продаёте холодильники, стиральные машины, телевизоры или мониторы?",
+      hint:"С 1 сентября 2026 они попали под прослеживаемость ЕАЭС.",
+      when: is("act","trade"),
+      opts:[["no","Нет"],["yes","Да"]] },
+
+    { id:"ecp", title:"Где сейчас ваша электронная подпись?", hint:"Последний вопрос. Он не про налоги, он про риск.",
+      opts:[["me","У меня, никому не передавала"],["other","У бухгалтера или помощника"],["dunno","Честно — не знаю"]] }
+  ];
+
+  var answers = {}, step = 0;
+  var $ = function(id){ return document.getElementById(id); };
+  var vis = function(i){ var q = QUESTIONS[i]; return !q.when || q.when(answers); };
+  var fwd = function(i){ for(; i < QUESTIONS.length; i++) if(vis(i)) return i; return -1; };
+  var bwd = function(i){ for(; i >= 0; i--) if(vis(i)) return i; return -1; };
+
+  function render(){
+    var q = QUESTIONS[step], total = 0, pos = 0;
+    for(var i = 0; i < QUESTIONS.length; i++){ if(vis(i)){ total++; if(i <= step) pos++; } }
+    $("pcount").textContent = pos + " / " + total;
+    $("pbar").style.width = Math.round(pos/total*100) + "%";
+    $("qtitle").textContent = q.title;
+    $("qhint").textContent = q.hint;
+    var box = $("qopts"); box.textContent = "";
+    q.opts.forEach(function(o, i){
+      var b = document.createElement("button");
+      b.className = "opt"; b.type = "button";
+      var tag = document.createElement("b"); tag.textContent = String.fromCharCode(1040 + i);
+      var sp = document.createElement("span"); sp.textContent = o[1];
+      b.appendChild(tag); b.appendChild(sp);
+      b.addEventListener("click", function(){
+        answers[q.id] = o[0];
+        var n = fwd(step + 1);
+        if(n === -1){ $("quiz").hidden = true; show(); }
+        else { step = n; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+      });
+      box.appendChild(b);
+    });
+    $("back").hidden = bwd(step - 1) === -1;
+  }
+
+  $("start").addEventListener("click", function(){
+    $("intro").hidden = true; $("quiz").hidden = false; step = fwd(0); render();
+  });
+  $("back").addEventListener("click", function(){
+    var p = bwd(step - 1); if(p !== -1){ step = p; render(); }
+  });
+
+  /* ---------- ставка по статье 423 ---------- */
+  function computeRate(a){
+    var cash = a.pay === "cash";
+    if(a.mode === "patent")  return {kind:"patent"};
+    if(a.mode === "general") return {kind:"general"};
+    if(a.act === "sewing")  return {rate:"0,25%", basis:"швейное и текстильное производство", ref:"часть 3 статьи 423"};
+    if(a.act === "jewelry") return {rate:"0,25%", basis:"ювелирные изделия", ref:"часть 3 статьи 423"};
+    if(a.act === "food")    return a.city === "bo"
+        ? {rate:"5%", basis:"общепит в Бишкеке и Оше", ref:"часть 5 статьи 423"}
+        : {rate:"3%", basis:"общепит вне Бишкека и Оша", ref:"часть 5 статьи 423"};
+    if(a.act === "sauna")   return {rate:"5%", basis:"услуги саун и бань", ref:"часть 4-1 статьи 423"};
+    if(a.act === "build")   return {rate:"4%", basis:"продажа вновь построенных помещений", ref:"часть 4-2 статьи 423"};
+    if(a.act === "trade"){
+      if(a.rev !== "gt50" && a.trader === "no")
+        return {rate:"0,5%", basis:"торговля с выручкой до 50 млн сомов", ref:"пункт 1 части 1 статьи 423"};
+      return {rate: cash ? "4%" : "2%", basis:"торговая деятельность", ref:"пункт 1 части 1 статьи 423"};
+    }
+    if(a.act === "prod" || a.act === "soft")
+      return {rate: cash ? "4%" : "2%", basis:"производство, переработка, ПО и туризм", ref:"пункт 2 части 1 статьи 423"};
+    if(a.act === "services" && a.form === "ip" && a.rev === "lt15" && a.kkm === "fiscal" && a.staff === "no")
+      return {rate:"0%", basis:"ИП без работников, услуги населению, до 15 млн, с фискальной кассой", ref:"часть 8 статьи 423"};
+    return {rate: cash ? "6%" : "4%", basis:"остальные виды деятельности", ref:"пункт 3 части 1 статьи 423"};
+  }
+
+  function el(t,c,x){ var n=document.createElement(t); if(c) n.className=c; if(x!=null) n.textContent=x; return n; }
+  function sticker(file,w){ var i=el("img"); i.src="stickers/"+file+".png"; i.alt=""; i.setAttribute("aria-hidden","true"); if(w) i.style.width=w; return i; }
+
+  function findings(a, r){
+    var f = [];
+    if(a.act === "services" && a.form === "ip" && r.rate !== "0%"){
+      var miss = [];
+      if(a.rev !== "lt15") miss.push("выручка выше 15 млн за 12 месяцев");
+      if(a.kkm !== "fiscal") miss.push("нет фискальной кассы");
+      if(a.staff !== "no") miss.push("есть наёмные работники");
+      if(miss.length === 1) f.push({w:100, t:"До нуля вам не хватает одного условия",
+        b:"ИП, который оказывает услуги населению, может платить ноль процентов. Условий три, и они должны выполняться одновременно. У вас не выполнено ровно одно: " + miss[0] + "."});
+      else if(miss.length > 1) f.push({w:40, t:"Нулевая ставка есть, но она не ваша",
+        b:"Ноль процентов положен ИП без работников, с фискальной кассой и выручкой до 15 млн. У вас не выполнено: " + miss.join("; ") + "."});
+    }
+    if(a.act === "trade" && a.rev !== "gt50" && a.trader === "yes") f.push({w:90,
+      t:"Вы теряете ставку 0,5%",
+      b:"Торговля с выручкой до 50 млн облагается по 0,5%. Но не у импортёров, экспортёров и дистрибьюторов — вы отметили, что это про вас. Если направления можно разделить корректно, разница в деньгах большая."});
+    if(a.act === "trade" && a.rev === "gt50") f.push({w:60,
+      t:"Порог 50 млн вы уже прошли",
+      b:"Ставка 0,5% работает, пока выручка за последние 12 месяцев подряд не превысила 50 млн. Считается скользящими двенадцатью месяцами, а не календарным годом."});
+    if(a.pay === "cash" && r.rate && r.rate !== "0,5%" && r.rate !== "0%") f.push({w:70,
+      t:"Наличные стоят вам вдвое дороже",
+      b:"Безналичная оплата облагается по вдвое меньшей ставке, чем наличная. Это не призыв отказаться от наличных — это повод посчитать, во сколько обходится привычка за год."});
+    if(a.mode === "general" && a.rev === "lt15") f.push({w:80,
+      t:"Проверьте, нужен ли вам общий режим",
+      b:"На общем режиме это НДС 12%, налог на прибыль 10% и налог с продаж. При вашей выручке стоит хотя бы посчитать альтернативу."});
+    return f.sort(function(x,y){ return y.w - x.w; });
+  }
+
+  var ACC_PERSONAL = {w:130, lvl:"crit", t:"Выручка приходит на вашу личную карту",
+    b2:"При проверке налоговая вправе запросить ваш личный счёт. И если на нём видны поступления от клиентов, налог могут доначислить на все поступления — со дня регистрации ИП или ОсОО, а не с момента проверки.",
+    b3:"Доказывать, что перевод от брата — это перевод от брата, а не выручка, придётся вам. Откройте бизнес-счёт и переведите приём денег туда."};
+
+  function alerts(a){
+    var al = [];
+    if(a.account === "personal") al.push({w:ACC_PERSONAL.w, lvl:"crit", t:ACC_PERSONAL.t, b:ACC_PERSONAL.b2, b2:ACC_PERSONAL.b3});
+    else if(a.account === "both") al.push({w:120, lvl:"crit", t:"Часть денег идёт мимо бизнес-счёта",
+      b:"Бизнес-счёт у вас есть, но часть выручки приходит на личную карту. Для проверки это одно и то же: личный счёт могут запросить и доначислить налог на все поступления по нему — со дня регистрации ИП или ОсОО, а не с момента проверки.",
+      b2:"Самое неприятное здесь — что доказывать происхождение каждого перевода придётся вам. Сведите приём денег на бизнес-счёт."});
+    if(a.ecp === "dunno") al.push({w:100, lvl:"crit", t:"Вы не знаете, где ваша подпись",
+      b:"Любой документ, подписанный вашей ЭЦП, юридически подписали вы. Выясните это сегодня."});
+    if(a.kkm === "unsure") al.push({w:95, lvl:"crit", t:"Вы не знаете, фискальная ли ваша касса",
+      b:"Если вы работаете с населением, касса должна быть фискальной и зарегистрированной в налоговой. Чек из обычного принтера и товарный чек от руки фискальными не являются. Как отличить — показываю ниже, в подробностях.", receipt:true});
+    if(a.ecp === "other") al.push({w:90, lvl:"crit", t:"Ваша подпись лежит у другого человека",
+      b:"Всё, что подписано вашей ЭЦП, юридически подписали вы. С 1 октября 2026 в Кабинете налогоплательщика можно выдать бухгалтеру доступ по его ИНН — только к нужным разделам и с возможностью отозвать. Подпись заберите."});
+    if(a.kkm === "no") al.push({w:85, lvl:"crit", t:"Вы работаете с населением без кассы",
+      b:"При работе с населением нужна фискальная ККМ. Без неё — штраф, а для ИП ещё и закрытая дорога к нулевой ставке.", receipt:true});
+    if(a.tech === "yes") al.push({w:80, lvl:"crit", t:"Прослеживаемость: срок уже прошёл",
+      b:"Остатки холодильников, стиральных машин, телевизоров и мониторов нужно было внести до 1 октября 2026 — через модуль «ЭСФ 2.0», раздел «Оприходование», на cabinet.salyk.kg. Если не внесли, сделайте это, не дожидаясь вопроса о происхождении товара."});
+    if(a.account === "cash" && a.kkm !== "fiscal") al.push({w:75, lvl:"crit", t:"Только наличные и без фискальной кассы",
+      b:"Это сочетание налоговая видит сразу. Наличная выручка без фискального чека — первое, что проверяют при работе с населением.", receipt:true});
+    al.push({w:10, lvl:"crit", t:"Сверьте регистрационные данные",
+      b:"ГНС просит проверить формы № 24 и № 25 в Кабинете налогоплательщика: район регистрации, режимы и контакты. Расхождения приводят к неверному расчёту налогов и к ограничениям по счетам."});
+    return al.sort(function(x,y){ return y.w - x.w; });
+  }
+
+  /* ---------- пример фискального чека ---------- */
+  function receiptBlock(){
+    var b = el("div","block");
+    b.appendChild(el("h4", null, "Как выглядит фискальный чек"));
+    var p = el("p"); p.style.cssText = "margin:0 0 12px;font-size:14px";
+    p.textContent = "Это тот самый чек, который вам выдают в гипермаркетах вроде «Глобуса» или «Азии». Фискальным его делают три вещи — они отмечены жёлтым.";
+    b.appendChild(p);
+
+    var wrap = el("div","receipt-wrap"), r = el("div","receipt");
+    function ln(l, v, mark){
+      var d = el("div","ln"); d.appendChild(el("span", null, l));
+      var s = el("span");
+      if(mark){ var m = el("mark", null, v); s.appendChild(m); } else { s.textContent = v; }
+      d.appendChild(s); return d;
+    }
+    function center(t, cls){ var d = el("div","c" + (cls ? " " + cls : ""), t); return d; }
+    function hr(){ return el("div","hr"); }
+
+    r.appendChild(center("ОсОО «ПРИМЕР»", "big"));
+    r.appendChild(center("г. Бишкек, ул. Примерная, 1"));
+    r.appendChild(center("ИНН 01234567890123"));
+    r.appendChild(hr());
+    r.appendChild(ln("Рег. № ККМ", "0001234567", true));
+    r.appendChild(ln("Заводской №", "KG20260012"));
+    r.appendChild(ln("Чек №", "000418"));
+    r.appendChild(ln("Дата", "04.11.2026  13:42"));
+    r.appendChild(hr());
+    r.appendChild(ln("Хлеб тартин", "68,00"));
+    r.appendChild(ln("Молоко 1 л", "92,00"));
+    r.appendChild(ln("Яйцо С1, 10 шт", "140,00"));
+    r.appendChild(hr());
+    var tot = ln("ИТОГО", "300,00"); tot.className = "ln big"; r.appendChild(tot);
+    r.appendChild(ln("в т.ч. НсП 2%", "6,00"));
+    r.appendChild(ln("Безналичными", "300,00"));
+    r.appendChild(hr());
+    r.appendChild(ln("ФП", "4471 9028 3355", true));
+
+    var qr = document.createElementNS("http://www.w3.org/2000/svg","svg");
+    qr.setAttribute("viewBox","0 0 21 21"); qr.setAttribute("class","qr"); qr.setAttribute("aria-hidden","true");
+    var bgr = document.createElementNS("http://www.w3.org/2000/svg","rect");
+    bgr.setAttribute("x","-1"); bgr.setAttribute("y","-1"); bgr.setAttribute("width","23"); bgr.setAttribute("height","23");
+    bgr.setAttribute("fill","#FFE9A3"); qr.appendChild(bgr);
+    var seed = 7;
+    function rnd(){ seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed >> 16) / 32768; }
+    function px(x,y){
+      var q = document.createElementNS("http://www.w3.org/2000/svg","rect");
+      q.setAttribute("x",x); q.setAttribute("y",y); q.setAttribute("width","1"); q.setAttribute("height","1");
+      q.setAttribute("fill","#1C1A16"); qr.appendChild(q);
+    }
+    function eye(ox,oy){
+      for(var x=0;x<7;x++) for(var y=0;y<7;y++){
+        var edge = (x===0||x===6||y===0||y===6), core = (x>=2&&x<=4&&y>=2&&y<=4);
+        if(edge||core) px(ox+x, oy+y);
+      }
+    }
+    for(var x=0;x<21;x++) for(var y=0;y<21;y++){
+      var inEye = (x<8&&y<8)||(x>12&&y<8)||(x<8&&y>12);
+      if(!inEye && rnd() > 0.55) px(x,y);
+    }
+    eye(0,0); eye(14,0); eye(0,14);
+    r.appendChild(qr);
+    r.appendChild(center("Фискальный чек"));
+
+    wrap.appendChild(r); b.appendChild(wrap);
+
+    var lg = el("ul","legend");
+    [["Регистрационный номер ККМ","касса стоит на учёте в налоговой"],
+     ["Фискальный признак (ФП)","подпись кассы под этим чеком"],
+     ["QR-код","по нему чек проверяется в базе ГНС"]].forEach(function(x){
+      var li = el("li"); li.appendChild(el("span"));
+      var d = el("div"); var bb = el("b", null, x[0] + " — "); bb.style.fontWeight = "600";
+      d.appendChild(bb); d.appendChild(document.createTextNode(x[1])); li.appendChild(d); lg.appendChild(li);
+    });
+    b.appendChild(lg);
+
+    var p2 = el("p"); p2.style.cssText = "margin:12px 0 0;font-size:14px";
+    p2.textContent = "Если на вашем чеке этого нет — чек не фискальный, и для налоговой продажи как будто не было.";
+    b.appendChild(p2);
+    return b;
+  }
+
+  function show(){
+    var a = answers, r = computeRate(a), out = $("result"), f = findings(a,r), al = alerts(a);
+    out.hidden = false; out.textContent = "";
+
+    /* 1. Вердикт */
+    var v = el("div","verdict"), vt = el("div");
+    vt.appendChild(el("span","label","Ваша ставка"));
+    if(r.kind === "general"){
+      vt.appendChild(el("div","rate","12% + 10%"));
+      vt.appendChild(el("p","basis","Общий режим: НДС и налог на прибыль, плюс налог с продаж"));
+    } else if(r.kind === "patent"){
+      vt.appendChild(el("div","rate","Патент"));
+      vt.appendChild(el("p","basis","Стоимость зависит от вида деятельности и места"));
+    } else {
+      vt.appendChild(el("div","rate", r.rate));
+      vt.appendChild(el("p","basis", r.basis));
+    }
+    v.appendChild(vt); v.appendChild(sticker("cat_wow"));
+    out.appendChild(v);
+
+    /* 2. Одна главная находка */
+    if(f.length){
+      var m = el("section","card focus"), mr = el("div","with-sticker"), md = el("div");
+      md.appendChild(el("h3", null, f[0].t));
+      md.appendChild(el("p", null, f[0].b));
+      mr.appendChild(md); mr.appendChild(sticker("cat_paw"));
+      m.appendChild(mr); out.appendChild(m);
+    } else {
+      var g = el("section","card good"), gr = el("div","with-sticker"), gd = el("div");
+      gd.appendChild(el("h3", null, "По ставке у вас всё чисто"));
+      gd.appendChild(el("p", null, "Из ваших ответов не видно, где вы переплачиваете. Это хорошая новость — но ставка это только одна сторона. Переплата чаще прячется в том, как оформлены сделки."));
+      gr.appendChild(gd); gr.appendChild(sticker("girl_smile"));
+      g.appendChild(gr); out.appendChild(g);
+    }
+
+    /* 3. Один самый острый риск */
+    var c = el("section","card crit");
+    c.appendChild(el("h3", null, al[0].t));
+    c.appendChild(el("p", null, al[0].b));
+    if(al[0].b2) c.appendChild(el("p", null, al[0].b2));
+    out.appendChild(c);
+
+    /* 4. CTA */
+    var cta = el("div","cta"), ctd = el("div");
+    ctd.appendChild(el("h3", null, "Хотите, чтобы это посчитала я?"));
+    ctd.appendChild(el("p", null, "Эта страница считает по вашим ответам. Она не видит договоров и выписок — а переплата обычно прячется именно там."));
+    ctd.appendChild(el("span","word","напишите слово «налоги»"));
+    ctd.appendChild(el("span","handle","в директ @ainazik.mamaevaa"));
+    cta.appendChild(ctd); cta.appendChild(sticker("girl_think"));
+    out.appendChild(cta);
+
+    /* 5. Всё остальное — свёрнуто */
+    var d = document.createElement("details");
+    var s = document.createElement("summary"); s.appendChild(document.createTextNode("Что ещё я проверила"));
+    d.appendChild(s);
+    var inner = el("div","inner");
+
+    if(f.length > 1){
+      var b1 = el("div","block"); b1.appendChild(el("h4", null, "Ещё по деньгам"));
+      f.slice(1).forEach(function(x){
+        var n = el("div","note"); n.appendChild(el("b", null, x.t));
+        n.appendChild(document.createTextNode(x.b)); b1.appendChild(n);
+      });
+      inner.appendChild(b1);
+    }
+
+    /* чек — если касса вообще обсуждалась и она не фискальная */
+    if(a.kkm && a.kkm !== "fiscal") inner.appendChild(receiptBlock());
+
+    var b2 = el("div","block"); b2.appendChild(el("h4", null, "Ваши сроки"));
+    var list = el("ul","rows");
+    function row(w,t){ var li=el("li"); li.appendChild(el("span","when",w)); li.appendChild(el("div",null,t)); return li; }
+    if(!r.kind) list.appendChild(row("до 20 числа","Отчёт по единому налогу и уплата. Для малого бизнеса период — квартал."));
+    if(a.mode === "general"){
+      list.appendChild(row("до 20 числа","Налог с продаж. Для малого бизнеса — ежеквартально."));
+      list.appendChild(row("до 25 числа","Отчётность по НДС и уплата НДС."));
+    }
+    if(a.staff === "yes") list.appendChild(row("до 20 числа","Отчёт по подоходному налогу за работников."));
+    list.appendChild(row("до 20 числа","Налог на нежилое имущество — в третьем месяце каждого квартала."));
+    list.appendChild(row("до 1 сентября","Налог на жилое имущество, раз в год."));
+    b2.appendChild(list); inner.appendChild(b2);
+
+    if(a.form === "ip"){
+      var b6 = el("div","block"); b6.appendChild(el("h4", null, "Если вы ИП — полис за себя"));
+      var p6 = el("p"); p6.style.cssText = "margin:0;font-size:14px";
+      p6.textContent = "Кроме налога, индивидуальный предприниматель обязан покупать страховой полис за самого себя. Его стоимость — 6% от усечённой средней заработной платы (УСМЗ) по тому району, в котором вы прописаны. УСМЗ в районах разная, поэтому точную сумму смотрите по своему району.";
+      b6.appendChild(p6);
+      var p7 = el("p"); p7.style.cssText = "margin:9px 0 0;font-size:14px";
+      p7.textContent = "Про полис забывают чаще всего — он не приходит напоминанием и не висит в кабинете строкой «вы должны».";
+      b6.appendChild(p7);
+      inner.appendChild(b6);
+    }
+
+    if(al.length > 1){
+      var b3 = el("div","block"); b3.appendChild(el("h4", null, "Остальные проверки"));
+      al.slice(1).forEach(function(x){
+        var n = el("div","note"); n.appendChild(el("b", null, x.t));
+        n.appendChild(document.createTextNode(x.b + (x.b2 ? " " + x.b2 : ""))); b3.appendChild(n);
+      });
+      var n2 = el("div","note"); n2.appendChild(el("b", null, "Не давайте паспорт на чужую фирму"));
+      n2.appendChild(document.createTextNode("Указ от 9 октября 2026 вводит ответственность за оформление бизнеса на подставных лиц и привлечение тех, кто реально управляет бизнесом. Там же предусмотрен самозапрет — возможность запретить регистрацию фирм на своё имя. Механизм ещё предстоит запустить."));
+      b3.appendChild(n2);
+      inner.appendChild(b3);
+    }
+
+    var b4 = el("div","block"); b4.appendChild(el("h4", null, "Что сделать на этой неделе"));
+    var ol = el("ol","steps"), items = [];
+    if(a.account === "personal" || a.account === "both") items.push("Открыть бизнес-счёт и перевести приём денег от клиентов на него.");
+    if(a.kkm === "unsure") items.push("Посмотреть свой чек: есть ли на нём регистрационный номер ККМ, фискальный признак и QR-код.");
+    if(a.kkm === "no") items.push("Поставить фискальную кассу и зарегистрировать её в налоговой.");
+    if(a.ecp !== "me") items.push("Выяснить, где ваша ЭЦП, и перевести бухгалтера на доступ по ИНН.");
+    if(a.mode === "unknown") items.push("Посмотреть свой режим в регистрационной карте — без этого всё считается наугад.");
+    if(a.tech === "yes") items.push("Внести остатки техники в систему прослеживаемости.");
+    if(a.form === "ip") items.push("Проверить, оплачен ли ваш страховой полис за себя.");
+    items.push("Сверить формы № 24 и № 25 в Кабинете налогоплательщика.");
+    items.slice(0,5).forEach(function(t){ ol.appendChild(el("li", null, t)); });
+    b4.appendChild(ol); inner.appendChild(b4);
+
+    var b5 = el("div","block");
+    var fp = el("p","fineprint");
+    fp.textContent = "Предварительная оценка по вашим ответам, а не налоговая консультация. Основание — Налоговый кодекс КР от 18.01.2022 № 3 в редакции от 06.08.2026" + (r.ref ? " (" + r.ref + ")" : "") + " и официальные сообщения ГНС за сентябрь–октябрь 2026. Названия банковских приложений приведены только как примеры.";
+    b5.appendChild(fp); inner.appendChild(b5);
+
+    d.appendChild(inner);
+    out.appendChild(d);
+
+    var rs = el("div","restart");
+    rs.appendChild(sticker("cat_happy"));
+    var again = el("button","btn ghost","Пройти заново");
+    again.addEventListener("click", function(){
+      answers = {}; step = 0; out.hidden = true; out.textContent = "";
+      $("intro").hidden = false; window.scrollTo({top:0,behavior:"smooth"});
+    });
+    rs.appendChild(again); out.appendChild(rs);
+
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+})();
+</script>
+
+</body></html>

@@ -598,9 +598,10 @@ ol.steps{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px;f
         method: "POST",
         keepalive: true,
         headers: {"Content-Type": "application/json"},
-        /* contact у бота обязателен, а формы здесь нет и контакта мы
-           не знаем — человек представится сам в переписке */
-        body: JSON.stringify({ source: "nalogi", contact: "напишет сам в личку", summary: text })
+        /* contact не передаём: формы здесь нет, человек представится
+           сам в переписке. Бот это понимает и шлёт «сейчас напишут
+           вам в личку» вместо обычного «Заявка» с кнопкой */
+        body: JSON.stringify({ source: "nalogi", summary: text })
       }).catch(function(){});
     }catch(e){}
   }
